@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>简单音乐播放器</title>
+        <script src="./js/jquery.min.js"></script>
+        <!-- https://liverwang.github.io/Pagination/ -->
+        <script src="./js/pagination.js"></script>
+        <style>
+            html {
+                padding: 0;
+                margin: 0;
+                display: flex;
+            }
+
+            body {
+                flex-direction: column;
+                flex-grow: 1;
+                display: flex;
+                width: 100vw;
+                max-width: 26rem;
+                margin: 0 auto;
+            }
+
+            .box {
+                width: 95%;
+                display: flex;
+                margin: 0.25rem auto;
+            }
+
+            input {
+                margin: 0 0.125rem 0 0;
+            }
+
+            #audio {
+                height: 3rem;
+            }
+
+            #search {
+                flex-grow: 1;
+                font-size: 1rem;
+                height: 1.5rem;
+                padding: 0.125rem 0.5rem;
+            }
+
+            #song-list {
+                flex-grow: 1;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            #status {
+                justify-content: left;
+            }
+
+            #song-list li {
+                border: gray solid 0.065rem;
+                border-radius: 0.25rem;
+                cursor: pointer;
+                margin: 0rem 0rem 0.25rem 0rem;
+                word-break: break-word;
+                min-height: 1.5rem;
+                padding: 0.125rem 0.5rem;
+            }
+
+            #song-list li:hover {
+                background-color: #f0f0f0;
+            }
+
+            .page-container {
+                justify-content: right;
+            }
+        </style>
+    </head>
+    <body>
+        <h3 id="title" class="box" style="justify-content: center">
+            简单音乐播放器
+        </h3>
+        <audio class="box" id="audio" controls>
+            <source id="audio-source" src="" type="audio/mpeg" />
+            您的浏览器不支持音频元素。
+        </audio>
+        <div class="box">
+            <input
+                type="button"
+                value="❌"
+                onclick="clearSearchKeyword()"
+                title="清空搜索关键词"
+            />
+            <input
+                type="text"
+                id="search"
+                oninput="doSearch()"
+                placeholder="搜索歌曲..."
+            />
+            <input
+                type="button"
+                value="🎲"
+                onclick="randPlay()"
+                title="播放随机歌曲"
+            />
+            <input
+                type="button"
+                value="🔄"
+                onclick="confirmUpdateMusicDb()"
+                title="更新数据库"
+            />
+        </div>
+        <span class="box" id="status"></span>
+        <div class="box">
+            <ul id="song-list">
+                <!-- 歌曲列表将由 JavaScript 动态生成 -->
+            </ul>
+        </div>
+        <div class="box" style="justify-content: center">
+            <div class="page-container"></div>
+        </div>
+
+        <script>
+            const MUSIC_DB_KEY = 'music-db-key'
+            const MUSIC_UPDATE_DATE_KEY = 'music-update-key'
+
+            let db = []
+            let searchResult = []
+            let currentPageNum = 0
+            let pageSize = 12
+
+            const title = document.getElementById('title')
+            const audio = document.getElementById('audio')
+            const audioSource = document.getElementById('audio-source')
+            const songList = document.getElementById('song-list')
+            const searchInput = document.getElementById('search')
+            const statusBoard = document.getElementById('status')
+
+            const pager = new Pagination('.page-container', {
+                pageSize: pageSize,
+                autoLoad: true,
+                unit: '首',
+                toPage: function (index, _pageSize) {
+                    currentPageNum = index
+                    pageSize = _pageSize || pageSize
+                    if (index === 0 || _pageSize) {
+                        this.updateCount(searchResult.length, _pageSize)
+                    }
+                    updateSongList()
+                },
+            })
+
+            function log(...args) {
+                console.log(...args)
+            }
+
+            function setStatus(...args) {
+                statusBoard.innerText = args.join(' ')
+            }
+
+            function fetchMusicDb() {
+                return new Promise((resolve, reject) => {
+                    // 创建一个新的 XMLHttpRequest 对象
+                    const xhr = new XMLHttpRequest()
+
+                    // 配置请求
+                    xhr.open('GET', 'serv.php', true)
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+
+                    // 设置响应类型为 JSON
+                    xhr.responseType = 'json'
+
+                    // 定义请求完成时的回调函数
+                    xhr.onload = function () {
+                        if (xhr.status !== 200) {
+                            reject(`network error`)
+                            return
+                        }
+                        // 请求成功，处理返回的 JSON 数据
+                        const response = xhr.response
+                        try {
+                            if (response.ok) {
+                                resolve(response.data)
+                            } else {
+                                reject(response.data)
+                            }
+                        } catch (err) {
+                            reject(err.message)
+                        }
+                    }
+
+                    xhr.onerror = (err) => reject(err.message)
+                    xhr.ontimeout = (err) => reject(err.message)
+
+                    xhr.send()
+                })
+            }
+
+            // 切换歌曲
+            songList.addEventListener('click', (e) => {
+                if (e.target.tagName === 'LI') {
+                    const src = e.target.getAttribute('data-src')
+                    play(src)
+                }
+            })
+
+            function play(src) {
+                if (!src) {
+                    setStatus('错误：路径为空')
+                    return
+                }
+                try {
+                    audio.pause()
+                    audio.currentTime = 0
+                    title.innerText = getMusicName(src)
+                    audioSource.src = src
+                    audio.load()
+                    audio.play()
+                    // log(`播放：${src}`)
+                } catch (err) {
+                    log(`play() error: ${err.message}`)
+                }
+            }
+
+            function randPick(arr) {
+                const idx = Math.floor(Math.random() * arr.length)
+                return arr[idx]
+            }
+
+            function clearSearchKeyword() {
+                searchInput.value = ''
+                setTimeout(() => {
+                    doSearch()
+                    searchInput.focus()
+                }, 1)
+            }
+
+            function randPlay() {
+                const src = randPick(db)
+                play(src)
+            }
+
+            audio.addEventListener('ended', () => {
+                randPlay()
+            })
+
+            function getKeywrods() {
+                const kws = searchInput.value
+                    .toLowerCase()
+                    .split(/[ ,-]/)
+                    .filter((kw) => kw)
+                return kws
+            }
+
+            function isMatch(kws, url) {
+                if (kws.length < 1) {
+                    return true
+                }
+                const lower = url.toLowerCase()
+                for (let kw of kws) {
+                    if (lower.indexOf(kw) < 0) {
+                        return false
+                    }
+                }
+                return true
+            }
+
+            function getMusicName(url) {
+                const ps = (url || '').split(/[/]/)
+                if (ps.length < 1) {
+                    return ''
+                }
+                return ps[ps.length - 1]
+            }
+
+            function doSearch() {
+                setStatus('搜索中...')
+                const kws = getKeywrods()
+                if (kws.length < 1) {
+                    searchResult = db
+                } else {
+                    const r = []
+                    for (let index = 0; index < db.length; index++) {
+                        const url = db[index]
+                        const name = getMusicName(url)
+                        if (name && isMatch(kws, name)) {
+                            r.push(url)
+                        }
+                    }
+                    searchResult = r
+                }
+                setStatus(`匹配：${searchResult.length} 总数：${db.length}`)
+                currentPageNum = 0
+                pager.updateCount(searchResult.length, pageSize)
+                updateSongList()
+            }
+
+            // 动态生成歌曲列表
+            function updateSongList() {
+                songList.innerHTML = '' // 清空现有列表
+                const start = currentPageNum * pageSize
+                const end = Math.min(start + pageSize, searchResult.length)
+                if (end <= start) {
+                    setStatus('没有匹配数据')
+                    return
+                }
+                for (let i = start; i < end; i++) {
+                    const url = searchResult[i]
+                    const name = getMusicName(url)
+                    const li = document.createElement('li')
+                    li.textContent = `${i + 1}. ${name}`
+                    li.title = url
+                    li.setAttribute('data-src', url)
+                    songList.appendChild(li)
+                }
+            }
+
+            function saveSettings() {
+                if (db.length || db.length === 0) {
+                    const data = JSON.stringify(db)
+                    window.localStorage.setItem(MUSIC_DB_KEY, data)
+                    const date = new Date().toLocaleString()
+                    window.localStorage.setItem(MUSIC_UPDATE_DATE_KEY, date)
+                }
+            }
+
+            function loadSettings() {
+                try {
+                    const s = window.localStorage.getItem(MUSIC_DB_KEY)
+                    return JSON.parse(s || '[]')
+                } catch {}
+                return []
+            }
+
+            function confirmUpdateMusicDb() {
+                const last = window.localStorage.getItem(MUSIC_UPDATE_DATE_KEY)
+                if (
+                    !last ||
+                    confirm(`上次更新：${last}\n确定要更新数据库吗？`)
+                ) {
+                    updateMusicDb()
+                }
+            }
+
+            function updateMusicDb() {
+                setStatus('加载数据...')
+                log('从服务器更新数据库')
+                fetchMusicDb()
+                    .catch(setStatus)
+                    .then((s) => {
+                        try {
+                            db = JSON.parse(s)
+                            saveSettings()
+                            doSearch()
+                        } catch (err) {
+                            setStatus('错误:', err.message)
+                        }
+                    })
+            }
+
+            function init() {
+                if ('mediaSession' in navigator) {
+                    log('注册<下一首>按钮响应函数')
+                    navigator.mediaSession.setActionHandler('nexttrack', () =>
+                        randPlay(),
+                    )
+                }
+
+                db = loadSettings()
+                if (db.length && db.length > 0) {
+                    setStatus('加载数据...')
+                    log('使用本地数据缓存')
+                    doSearch()
+                    return
+                }
+                updateMusicDb()
+            }
+
+            init()
+        </script>
+    </body>
+</html>
