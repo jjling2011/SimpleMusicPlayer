@@ -9,7 +9,7 @@
 访问 serv.php 会看到一个列出所有音乐文件路径的 JSON 页面。  
 访问 index.html 会看到播放器页面。  
 
-[player.png](./doc/player.png)  
+![player.png](./doc/player.png)  
 
 ### 高级用法
  * 可以添加 flac 等其他格式音乐，至于能不能播放就得看浏览器支不支持了
