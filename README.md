@@ -1,5 +1,5 @@
 # SimpleWebMusicPlayer
-这是一个播放服务器里面的音乐的网页应用。原本是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。起因是我想播放 NAS 中的音乐，但是找来找去网上的项目都太复杂了。我的需求只是无脑播放音乐，于是只好自己写一个。这个项目只有几百行代码，是个很简陋的项目，也不打算添加复杂的功能。
+这是一个播放服务器里面的音乐的网页应用。是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。功能比较简陋，也不打算添加复杂的功能。
 
 ### 安装
  * 克隆这个项目，或者下载项目的源码 zip 包
@@ -18,6 +18,3 @@
 
 ### 更新日志
 [update.md](./update.md)  
-
-### 感谢
-[Pagination](https://liverwang.github.io/Pagination/) 分页组件用的是这个项目  
