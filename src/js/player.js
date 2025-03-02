@@ -124,10 +124,16 @@ export default class Player {
         }
         this.#currentTrack = src
         this.#audioSource.attr("src", src)
-        this.#title.text(utils.getMusicName(src))
+        const name = utils.getMusicName(src)
+        this.#title.text(name)
         utils.log(`播放：${src}`)
         this.#audio.load()
         this.#tryPlay()
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: name,
+            })
+        }
         this.onPlay && this.onPlay(this.#currentTrack)
     }
 
