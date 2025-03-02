@@ -50,10 +50,16 @@
             <div class="pages-header">
                 <button id="pages-btn-lib" class="active">库</button>
                 <button id="pages-btn-playlist">列表</button>
+                <button id="pages-btn-dirlist">目录</button>
             </div>
         </div>
+        <div id="pages-div-dirlist" class="pages-div box wrap"></div>
         <div id="pages-div-playlist" class="pages-div">
-            <div class="box wrap" id="playlist-dirs"></div>
+            <div class="box wrap">
+                <button id="playlist-sort-btn">顺序</button>
+                <button id="playlist-shuffle-btn">随机</button>
+                <button id="playlist-reverse-btn">逆序</button>
+            </div>
             <div class="box wrap">
                 <ul id="playlist-music-list"></ul>
             </div>
@@ -98,6 +104,7 @@
         import LibList from "./js/lib-list.js"
         import Pages from "./js/pages.js"
         import PlayList from "./js/play-list.js"
+        import DirList from "./js/dir-list.js"
 
         window.utils = new Utils()
         const pages = new Pages()
@@ -106,13 +113,13 @@
         const db = new Database()
         const player = new Player(db)
         const playList = new PlayList(db, player)
-        const libList = new LibList(db, player, playList)
+        const dirList = new DirList(db, playList)
+        const libList = new LibList(db, player, dirList)
 
         if (db.getAllMusic().length < 1) {
             await db.updateMusicDbAsync()
         }
-
-        playList.refresh()
         libList.doSearch()
+        dirList.refresh()
     </script>
 </html>

@@ -6,17 +6,17 @@ export default class LibList {
 
     #db
     #player
-    #playList
+    #dirList
     #musicList
     #searchBox
     #pager
 
-    constructor(db, player, playList) {
+    constructor(db, player, dirList) {
         const that = this
 
         this.#db = db
         this.#player = player
-        this.#playList = playList
+        this.#dirList = dirList
 
         this.#searchBox = $(`#lib-search-box`)
         this.#searchBox.on("input", () => that.doSearch())
@@ -40,7 +40,7 @@ export default class LibList {
         if (!last || confirm(`上次更新：${last}\n确定要更新数据库吗？`)) {
             await this.#db.updateMusicDbAsync()
             this.#clearSearchKeyword()
-            this.#playList.refresh()
+            this.#dirList.refresh()
         }
     }
 

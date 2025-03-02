@@ -80,6 +80,27 @@ export default class Database {
         return this.#data.update
     }
 
+    reversePlayList() {
+        this.#data.list.reverse()
+        this.#save()
+    }
+
+    sortPlayList() {
+        this.#data.list.sort((a, b) => {
+            const pa = a.split("/")
+            const pb = b.split("/")
+            const la = pa[pa.length - 1]
+            const lb = pb[pb.length - 1]
+            return la < lb ? -1 : la > lb ? 1 : 0
+        })
+        this.#save()
+    }
+
+    shufflePlayList() {
+        utils.shuffleArray(this.#data.list)
+        this.#save()
+    }
+
     getPlayList() {
         return this.#data.list
     }

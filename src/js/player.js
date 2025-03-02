@@ -5,7 +5,7 @@ export default class Player {
     #audio
 
     #audioSource
-    #currentTrack
+    currentTrack
 
     // callback event handler
     onPlay = (track) => {}
@@ -149,7 +149,7 @@ export default class Player {
 
     #playIndexOffset(delta) {
         const tracks = this.#db.getPlayList()
-        const idx = tracks.indexOf(this.#currentTrack) + delta
+        const idx = tracks.indexOf(this.currentTrack) + delta
         const len = tracks.length
         const src = tracks[(idx + len) % len]
         this.play(src)
@@ -161,7 +161,7 @@ export default class Player {
         if (!src) {
             throw new Error("路径为空")
         }
-        this.#currentTrack = src
+        this.currentTrack = src
         this.#audioSource.attr("src", src)
         const name = utils.getMusicName(src)
         this.#title.text(name)
@@ -173,7 +173,7 @@ export default class Player {
                 title: name,
             })
         }
-        this.onPlay && this.onPlay(this.#currentTrack)
+        this.onPlay && this.onPlay(this.currentTrack)
     }
 
     #tryPlay() {

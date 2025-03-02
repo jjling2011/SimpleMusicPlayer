@@ -1,4 +1,4 @@
-const TAGS = ["lib", "playlist", "setting"]
+const TAGS = ["lib", "playlist", "dirlist"]
 
 export default class Pages {
     constructor() {}
