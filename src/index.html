@@ -15,16 +15,19 @@
                     <source id="audio-source" src="" />
                     你的浏览器不支持音乐播放功能
                 </audio>
-                <span id="audio-timestamp">0:00 / 0:00</span>
-                <div id="audio-progress-container">
-                    <div id="audio-progress-bar"></div>
-                </div>
                 <input
                     type="button"
                     value="🔁"
                     id="audio-play-mode"
                     title="顺序、随机播放"
                 />
+                <div id="audio-progress-wrapper">
+                    <span>&nbsp;</span>
+                    <div id="audio-progress-container">
+                        <div id="audio-progress-bar"></div>
+                    </div>
+                    <span id="audio-timestamp">0:00 / 0:00</span>
+                </div>
                 <input
                     type="button"
                     value="⏮"
