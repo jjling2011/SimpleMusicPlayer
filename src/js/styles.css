@@ -74,11 +74,6 @@ input[type="button"] {
     font-size: 0.9rem;
 }
 
-#audio-progress-wrapper {
-    text-align: center;
-    flex-grow: 1;
-}
-
 #audio-progress-container {
     flex-grow: 1;
     cursor: pointer;
