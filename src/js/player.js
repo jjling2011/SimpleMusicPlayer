@@ -3,24 +3,24 @@ export default class Player {
 
     #title
     #audio
-    #playBtn
+
     #audioSource
     #currentTrack
-    #isPlaying = false
-    onPlay = null
+
+    // callback event handler
+    onPlay = (track) => {}
 
     constructor(db) {
         const that = this
+
         this.#db = db
         this.#title = $("#audio-title")
         this.#audio = $("#audio")[0]
         this.#audioSource = $("#audio-source")
-        this.#playBtn = $("#audio-start-pause")
 
-        this.#audio.addEventListener("ended", () => this.nextTrack())
-
+        this.#audio.addEventListener("ended", () => that.nextTrack())
         if ("mediaSession" in navigator) {
-            utils.log("注册 <上一首> <下一首> 按钮响应函数")
+            utils.log("注册 <上一首> <下一首> 响应函数")
             navigator.mediaSession.setActionHandler("nexttrack", () =>
                 that.nextTrack(),
             )
@@ -29,33 +29,15 @@ export default class Player {
             )
         }
 
-        const progBar = $("#audio-progress-bar")
-        const timeLabel = $("#audio-timestamp")
-        this.#audio.addEventListener("timeupdate", () => {
-            const dur = that.#audio.duration
-            if (!dur) {
-                timeLabel.text(`0:00 / 0:00`)
-                return
-            }
+        this.#initTimeLabel()
+        this.#initProgressContainer()
+        this.#initPlayModeButton()
+        this.#initPrevNextTrackButtons()
+        this.#initPlayButton()
+    }
 
-            const cur = that.#audio.currentTime
-            const percent = Math.floor((cur / dur) * 100)
-            progBar.width(`${percent}%`)
-            timeLabel.text(
-                `${utils.formatTime(cur)} / ${utils.formatTime(dur)}`,
-            )
-        })
-
-        this.#audio.addEventListener("play", () => {
-            that.#isPlaying = true
-            that.#playBtn.val("⏸")
-        })
-
-        this.#audio.addEventListener("pause", () => {
-            that.#isPlaying = false
-            that.#playBtn.val("▶")
-        })
-
+    #initProgressContainer() {
+        const that = this
         const progContainer = $("#audio-progress-container")
         progContainer.on("click", function (e) {
             if (that.#audio.pasued) {
@@ -66,7 +48,47 @@ export default class Player {
             const jumpTime = (clickX / width) * that.#audio.duration
             that.#audio.currentTime = jumpTime
         })
+    }
 
+    #initPlayModeButton() {
+        const that = this
+        const playModeBtn = $("#audio-play-mode")
+        function updatePlayModeBtn() {
+            const isRandom = that.#db.isPlayModeRandom()
+            playModeBtn.val(isRandom ? "🔀" : "🔁")
+        }
+        updatePlayModeBtn()
+        playModeBtn.click(() => {
+            const isRandom = !this.#db.isPlayModeRandom()
+            that.#db.setPlayMode(isRandom)
+            updatePlayModeBtn()
+        })
+    }
+
+    #initTimeLabel() {
+        const that = this
+        const timeLabel = $("#audio-timestamp")
+        const progBar = $("#audio-progress-bar")
+
+        this.#audio.addEventListener("timeupdate", () => {
+            const dur = that.#audio.duration
+            if (!dur) {
+                timeLabel.text("0:00 / 0:00")
+                return
+            }
+
+            const cur = that.#audio.currentTime
+            const percent = Math.floor((cur / dur) * 100)
+            progBar.width(`${percent}%`)
+
+            const head = utils.formatTime(cur)
+            const tail = utils.formatTime(dur)
+            timeLabel.text(`${head} / ${tail}`)
+        })
+    }
+
+    #initPrevNextTrackButtons() {
+        const that = this
         $("#audio-prev-track").click(() => {
             that.prevTrack()
         })
@@ -74,9 +96,26 @@ export default class Player {
         $("#audio-next-track").click(() => {
             that.nextTrack()
         })
+    }
 
-        this.#playBtn.click(() => {
-            if (that.#isPlaying) {
+    #initPlayButton() {
+        const that = this
+
+        let isPlaying = false
+        const playBtn = $("#audio-start-pause")
+
+        this.#audio.addEventListener("play", () => {
+            isPlaying = true
+            playBtn.val("⏸")
+        })
+
+        this.#audio.addEventListener("pause", () => {
+            isPlaying = false
+            playBtn.val("▶")
+        })
+
+        playBtn.click(() => {
+            if (isPlaying) {
                 that.#audio.pause()
                 return
             }
