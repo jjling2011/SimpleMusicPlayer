@@ -71,18 +71,26 @@ export default class Player {
         const that = this
         const timeLabel = $("#audio-timestamp")
         const progBar = $("#audio-progress-bar")
+        const bufBar = $("#audio-progress-buff")
+
+        this.#audio.addEventListener("timeupdate", () => {})
 
         this.#audio.addEventListener("timeupdate", () => {
             const dur = that.#audio.duration
-            if (!dur) {
+            const buf = that.#audio.buffered
+            if (!dur || !buf || buf.length < 1) {
                 timeLabel.text("0:00 / 0:00")
                 return
             }
-
             const cur = that.#audio.currentTime
-            const percent = Math.floor((cur / dur) * 100)
-            progBar.width(`${percent}%`)
 
+            // progress bar
+            const pcb = Math.floor((buf.end(buf.length - 1) / dur) * 100)
+            const pcc = Math.floor((((cur / dur) * 100) / pcb) * 100)
+            bufBar.width(`${pcb}%`)
+            progBar.width(`${pcc}%`)
+
+            // timestamp
             const head = utils.formatTime(cur)
             const tail = utils.formatTime(dur)
             timeLabel.text(`${head} / ${tail}`)
@@ -124,7 +132,7 @@ export default class Player {
             const src = that.#audioSource.attr("src")
             if (src) {
                 utils.log(`try play: ${src}`)
-                that.#tryPlay()
+                that.#tryPlay(src)
             } else {
                 utils.log(`nextTrack()`)
                 that.nextTrack()
@@ -179,11 +187,11 @@ export default class Player {
         }
         this.#loadTrack(src)
         this.#db.setCurTrack(src)
-        this.#tryPlay()
-        this.onPlay && this.onPlay(src)
+        this.#tryPlay(src)
     }
 
-    #tryPlay() {
+    #tryPlay(src) {
         this.#audio.play().catch((err) => utils.log(`play err: ${err.message}`))
+        this.onPlay && this.onPlay(src)
     }
 }
