@@ -51,8 +51,9 @@ export default class Database {
         const catsSelected = {}
         for (const url of this.#data.all) {
             const dirs = url.split("/").filter((s) => s && s !== ".")
+            let dir = "./"
             for (let index = 0; index < dirs.length - 1; index++) {
-                const dir = `${dirs[index]}`
+                dir = `${dir}${dirs[index]}/`
                 catsAll[dir] = (catsAll[dir] || 0) + 1
                 catsSelected[dir] = this.#data.catsSelected[dir] || false
             }
@@ -64,9 +65,7 @@ export default class Database {
     #updatePlayList() {
         const list = []
         const cats = this.#data.catsSelected
-        const dirs = Object.keys(cats)
-            .filter((k) => cats[k])
-            .map((k) => `/${k}/`)
+        const dirs = Object.keys(cats).filter((k) => cats[k])
         for (const url of this.#data.all) {
             for (const dir of dirs) {
                 if (url.indexOf(dir) >= 0) {
@@ -76,6 +75,34 @@ export default class Database {
             }
         }
         this.#data.list = list
+    }
+
+    #setAllCats(state) {
+        const cats = this.#data.catsSelected
+        const keys = Object.keys(cats)
+        for (const key of keys) {
+            cats[key] = state
+        }
+        this.#updatePlayList()
+        this.#save()
+    }
+
+    selectAllCats() {
+        this.#setAllCats(true)
+    }
+
+    inverseCatsSelection() {
+        const cats = this.#data.catsSelected
+        const keys = Object.keys(cats)
+        for (const key of keys) {
+            cats[key] = !cats[key]
+        }
+        this.#updatePlayList()
+        this.#save()
+    }
+
+    unselectAllCats() {
+        this.#setAllCats(false)
     }
 
     setCurTrack(track) {

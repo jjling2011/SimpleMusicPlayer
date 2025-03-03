@@ -108,6 +108,30 @@ input[type="button"] {
     font-size: 0.9rem;
 }
 
+#dirlist-dirs {
+    text-align: center;
+}
+
+#dirlist-dirs button {
+    border-radius: 0.25rem;
+    border: 0.02rem solid darkgray;
+    width: 95%;
+    display: flex;
+    height: auto;
+    align-items: center;
+}
+
+#dirlist-dirs button span:first-child {
+    flex-grow: 1;
+    text-align: left;
+    word-break: break-word;
+}
+
+#dirlist-dirs button span {
+    font-size: 1rem;
+    margin: 0.125rem 0.25rem;
+}
+
 #search-bar button {
     font-size: 1.5rem;
     border: none;

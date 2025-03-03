@@ -46,13 +46,20 @@
         <div class="box pages-header-bottom">
             <span id="utils-status"></span>
             <div class="pages-header">
-                <button id="pages-btn-lib" class="active">库</button>
-                <button id="pages-btn-playlist">列表</button>
+                <button id="pages-btn-lib">库</button>
+                <button id="pages-btn-playlist" class="active">歌单</button>
                 <button id="pages-btn-dirlist">目录</button>
             </div>
         </div>
-        <div id="pages-div-dirlist" class="pages-div box wrap"></div>
-        <div id="pages-div-playlist" class="pages-div">
+        <div id="pages-div-dirlist" class="pages-div">
+            <div class="box wrap">
+                <button id="dirlist-select-all">全选</button>
+                <button id="dirlist-inverse-selection">反选</button>
+                <button id="dirlist-clear-selection">不选</button>
+            </div>
+            <div class="box wrap" id="dirlist-dirs"></div>
+        </div>
+        <div id="pages-div-playlist" class="pages-div active">
             <div class="box wrap">
                 <button id="playlist-sort-btn">顺序</button>
                 <button id="playlist-shuffle-btn">随机</button>
@@ -65,7 +72,7 @@
                 <div class="pager wrap" id="playlist-pager-container"></div>
             </div>
         </div>
-        <div id="pages-div-lib" class="pages-div active">
+        <div id="pages-div-lib" class="pages-div">
             <div class="box" id="search-bar">
                 <button id="lib-clear" title="清空搜索关键词">
                     <i class="fa-solid fa-trash-can"></i>
@@ -113,5 +120,6 @@
         }
         libList.doSearch()
         dirList.refresh()
+        $(`#pages-btn-playlist`).trigger("click")
     </script>
 </html>
