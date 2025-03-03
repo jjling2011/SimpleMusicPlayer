@@ -13,6 +13,18 @@ body {
     margin: 0 auto;
 }
 
+footer {
+    color: gray;
+    font-size: 0.8rem;
+    margin: 0.25rem 0.75rem;
+    text-align: right;
+}
+
+footer a {
+    color: gray;
+    text-decoration-line: none;
+}
+
 .box {
     width: 95%;
     display: flex;
@@ -38,7 +50,8 @@ input[type="button"] {
 
 #utils-status {
     flex-grow: 1;
-    justify-content: left;
+    font-size: 1rem;
+    text-align: right;
 }
 
 #audio-title {
@@ -106,6 +119,7 @@ input[type="button"] {
 #audio-timestamp {
     color: gray;
     font-size: 0.9rem;
+    line-height: 1.5rem;
 }
 
 #dirlist-dirs {
@@ -113,9 +127,11 @@ input[type="button"] {
 }
 
 #dirlist-dirs button {
+    padding: 0.125rem 0.25rem;
+    margin: 0.125rem;
     border-radius: 0.25rem;
     border: 0.02rem solid darkgray;
-    width: 95%;
+    width: 98%;
     display: flex;
     height: auto;
     align-items: center;
@@ -133,6 +149,8 @@ input[type="button"] {
 }
 
 #search-bar button {
+    margin: 0 0.5rem;
+    padding: 0;
     font-size: 1.5rem;
     border: none;
 }
@@ -147,8 +165,8 @@ input[type="button"] {
     display: flex;
 }
 
-.pages-header-bottom {
-    border-bottom: solid #ddd 0.0625rem;
+.pages-header-wrapper {
+    margin: 0 0.5rem;
 }
 
 .pages-header button {
@@ -156,6 +174,7 @@ input[type="button"] {
     width: 3rem;
     background-color: rgba(0, 0, 0, 0);
     border-style: none;
+    font-size: 1rem;
 }
 
 .pages-header button.active {
@@ -168,6 +187,11 @@ input[type="button"] {
 }
 
 .pages-div {
+    display: none;
+    min-height: 28rem;
+    margin: 0;
+    border-radius: 0.25rem;
+    border: solid 0.02rem #ddd;
     display: none;
 }
 
@@ -206,6 +230,20 @@ input[type="button"] {
 
 .playlist-pager-container {
     justify-content: right;
+}
+
+#dirlist-total,
+#playlist-total,
+#lib-total {
+    flex-grow: 1;
+    display: flex;
+    justify-content: end;
+    font-size: 1rem;
+    margin: 0.25rem 0.75rem;
+}
+
+#lib-total {
+    justify-content: start;
 }
 
 #lib-search-box {

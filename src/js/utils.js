@@ -9,8 +9,16 @@ export default class Utils {
         console.log(...args)
     }
 
+    compareString(a, b) {
+        return a < b ? -1 : a > b ? 1 : 0
+    }
+
     showStatus(...args) {
         this.#status.text(args.join(" "))
+    }
+
+    showText(id, content) {
+        $(`#${id}`).text(content)
     }
 
     post(url, str) {

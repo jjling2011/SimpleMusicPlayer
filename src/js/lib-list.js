@@ -19,8 +19,8 @@ export default class LibList {
         this.#dirList = dirList
 
         this.#searchBox = $(`#lib-search-box`)
-        this.#searchBox.on("input", () => that.doSearch())
-        $(`#lib-clear`).click(() => that.#clearSearchKeyword())
+        this.#searchBox.on("input", () => that.#doSearch())
+        $(`#lib-clear`).click(() => that.clearSearchKeyword())
         $(`#lib-update-db`).click(() => that.#confirmUpdateMusicDb())
 
         this.#musicList = $(`#lib-music-list`)
@@ -39,16 +39,17 @@ export default class LibList {
         const last = this.#db.getLastUpdateDate()
         if (!last || confirm(`上次更新：${last}\n确定要更新数据库吗？`)) {
             await this.#db.updateMusicDbAsync()
-            this.#clearSearchKeyword()
+            alert(`更新完成`)
+            this.clearSearchKeyword()
             this.#dirList.refresh()
         }
     }
 
-    #clearSearchKeyword() {
+    clearSearchKeyword() {
         const that = this
         this.#searchBox.val("")
         setTimeout(() => {
-            that.doSearch()
+            that.#doSearch()
             that.#searchBox.focus()
         }, 1)
     }
@@ -62,8 +63,8 @@ export default class LibList {
         return kws
     }
 
-    doSearch() {
-        utils.showStatus("搜索中...")
+    #doSearch() {
+        utils.showText("lib-total", "搜索中...")
         const db = this.#db.getAllMusic()
         const kws = this.#getKeywrods()
         if (kws.length < 1) {
@@ -79,8 +80,9 @@ export default class LibList {
             }
             this.#searchResult = r
         }
-        utils.showStatus(
-            `结果：${this.#searchResult.length} 总数：${db.length}`,
+        utils.showText(
+            "lib-total",
+            `结果：${this.#searchResult.length} 共：${db.length}`,
         )
 
         const lastPage =
@@ -93,7 +95,7 @@ export default class LibList {
         const end = Math.min(start + this.#pageSize, this.#searchResult.length)
         this.#musicList.empty()
         if (end <= start) {
-            utils.showStatus("没有匹配的数据")
+            utils.showText("lib-total", "没有匹配的数据")
             return
         }
         for (let i = start; i < end; i++) {

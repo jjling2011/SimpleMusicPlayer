@@ -12,23 +12,21 @@ export default class DirList {
         $("#dirlist-select-all").click(() => {
             that.#db.selectAllCats()
             that.refresh()
-            that.#reportTotal()
         })
         $("#dirlist-clear-selection").click(() => {
             that.#db.unselectAllCats()
             that.refresh()
-            that.#reportTotal()
         })
         $("#dirlist-inverse-selection").click(() => {
             that.#db.inverseCatsSelection()
             that.refresh()
-            that.#reportTotal()
         })
     }
 
     refresh() {
         this.#playList.refresh()
         this.#updateDirs()
+        this.#reportTotal()
     }
 
     #updateDirs() {
@@ -39,9 +37,9 @@ export default class DirList {
         const cats = this.#db.getCatsAll()
         const catsSelected = this.#db.getCatsSelected()
         const keys = Object.keys(cats).sort((a, b) => {
-            const pna = a.split("/").length
-            const pnb = a.split("/").length
-            return pna - pnb || cats[b] - cats[a] || a < b
+            const pna = a.split("/").filter((s) => s).length
+            const pnb = b.split("/").filter((s) => s).length
+            return pna - pnb || cats[b] - cats[a] || utils.compareString(a, b)
         })
 
         for (const dir of keys) {
@@ -59,7 +57,6 @@ export default class DirList {
             btn.click(() => {
                 that.#db.toggleCat(dir)
                 that.refresh()
-                that.#reportTotal()
             })
             c.append(btn)
         }
@@ -68,6 +65,6 @@ export default class DirList {
     #reportTotal() {
         const selected = this.#db.getPlayList().length
         const all = this.#db.getAllMusic().length
-        utils.showStatus(`选中：${selected} 总数：${all}`)
+        utils.showText("dirlist-total", `选中：${selected} 共：${all}`)
     }
 }

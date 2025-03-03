@@ -67,12 +67,12 @@ export default class PlayList {
         const pns = Math.ceil(list.length / this.#pageSize)
 
         this.list = list
-
         this.#pager.goto(cur, pns)
     }
 
     refresh(track) {
         const src = track || this.#db.getCurTrack()
         this.#updateMusicList(src)
+        utils.showText("playlist-total", `合计：${this.list.length}`)
     }
 }

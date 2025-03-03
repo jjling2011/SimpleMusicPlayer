@@ -43,19 +43,20 @@
                 </button>
             </div>
         </div>
-        <div class="box pages-header-bottom">
-            <span id="utils-status"></span>
+        <div class="box pages-header-wrapper">
             <div class="pages-header">
                 <button id="pages-btn-lib">库</button>
                 <button id="pages-btn-playlist" class="active">歌单</button>
                 <button id="pages-btn-dirlist">目录</button>
             </div>
+            <span id="utils-status"></span>
         </div>
         <div id="pages-div-dirlist" class="pages-div">
             <div class="box wrap">
                 <button id="dirlist-select-all">全选</button>
                 <button id="dirlist-inverse-selection">反选</button>
                 <button id="dirlist-clear-selection">不选</button>
+                <span id="dirlist-total"></span>
             </div>
             <div class="box wrap" id="dirlist-dirs"></div>
         </div>
@@ -64,6 +65,7 @@
                 <button id="playlist-sort-btn">顺序</button>
                 <button id="playlist-shuffle-btn">随机</button>
                 <button id="playlist-reverse-btn">逆序</button>
+                <span id="playlist-total"></span>
             </div>
             <div class="box wrap">
                 <ul id="playlist-music-list"></ul>
@@ -80,21 +82,27 @@
                 <input
                     type="text"
                     id="lib-search-box"
-                    placeholder="搜索歌曲..."
+                    placeholder="搜索歌名..."
                 />
                 <button id="lib-update-db" title="更新数据库">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                 </button>
             </div>
+            <span id="lib-total"></span>
             <div class="box">
-                <ul id="lib-music-list">
-                    <!-- 歌曲列表将由 JavaScript 动态生成 -->
-                </ul>
+                <ul id="lib-music-list"></ul>
             </div>
             <div class="box hcenter">
                 <div class="pager wrap" id="lib-pager-container"></div>
             </div>
         </div>
+        <footer>
+            <a
+                href="https://github.com/jjling2011/SimpleWebMusicPlayer"
+                target="_blank"
+                >by jjling 2025</a
+            >
+        </footer>
     </body>
     <script type="module">
         import Utils from "./js/utils.js"
@@ -117,9 +125,9 @@
 
         if (db.getAllMusic().length < 1) {
             await db.updateMusicDbAsync()
+            $("#pages-btn-lib").trigger("click")
         }
-        libList.doSearch()
+        libList.clearSearchKeyword()
         dirList.refresh()
-        $(`#pages-btn-playlist`).trigger("click")
     </script>
 </html>

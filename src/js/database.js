@@ -44,6 +44,7 @@ export default class Database {
         this.#updateCats()
         this.#updatePlayList()
         this.#save()
+        utils.showStatus("")
     }
 
     #updateCats() {
@@ -51,7 +52,7 @@ export default class Database {
         const catsSelected = {}
         for (const url of this.#data.all) {
             const dirs = url.split("/").filter((s) => s && s !== ".")
-            let dir = "./"
+            let dir = ""
             for (let index = 0; index < dirs.length - 1; index++) {
                 dir = `${dir}${dirs[index]}/`
                 catsAll[dir] = (catsAll[dir] || 0) + 1
@@ -129,7 +130,7 @@ export default class Database {
             const pb = b.split("/")
             const la = pa[pa.length - 1]
             const lb = pb[pb.length - 1]
-            return la < lb ? -1 : la > lb ? 1 : 0
+            return utils.compareString(la, lb)
         })
         this.#save()
     }
