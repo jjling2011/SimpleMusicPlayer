@@ -2,6 +2,7 @@ const DATA_KEY = "data-key"
 
 export default class Database {
     #data
+    #saveSettingsTimerHandle
 
     constructor() {
         this.#load()
@@ -15,6 +16,7 @@ export default class Database {
             catsAll: {},
             catsSelected: {},
             update: "",
+            curTrack: "",
         }
 
         try {
@@ -76,6 +78,15 @@ export default class Database {
         this.#data.list = list
     }
 
+    setCurTrack(track) {
+        this.#data.curTrack = track
+        this.#save()
+    }
+
+    getCurTrack() {
+        return this.#data.curTrack
+    }
+
     getLastUpdateDate() {
         return this.#data.update
     }
@@ -123,8 +134,15 @@ export default class Database {
         this.#save()
     }
 
-    #save() {
+    #saveSettingsCore() {
         const d = JSON.stringify(this.#data)
         window.localStorage.setItem(DATA_KEY, d)
+    }
+
+    #save() {
+        clearTimeout(this.#saveSettingsTimerHandle)
+        this.#saveSettingsTimerHandle = setTimeout(() => {
+            this.#saveSettingsCore()
+        }, 500)
     }
 }

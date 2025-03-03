@@ -3,9 +3,7 @@ export default class Player {
 
     #title
     #audio
-
     #audioSource
-    currentTrack
 
     // callback event handler
     onPlay = (track) => {}
@@ -34,6 +32,11 @@ export default class Player {
         this.#initPlayModeButton()
         this.#initPrevNextTrackButtons()
         this.#initPlayButton()
+
+        const src = this.#db.getCurTrack()
+        if (src) {
+            this.#loadTrack(src)
+        }
     }
 
     #initProgressContainer() {
@@ -55,7 +58,9 @@ export default class Player {
         const playModeBtn = $("#audio-play-mode")
         function updatePlayModeBtn() {
             const isRandom = that.#db.isPlayModeRandom()
-            playModeBtn.val(isRandom ? "🔀" : "🔁")
+            const shuffle = '<i class="fa-solid fa-shuffle"></i>'
+            const cycle = '<i class="fa-solid fa-repeat"></i>'
+            playModeBtn.html(isRandom ? shuffle : cycle)
         }
         updatePlayModeBtn()
         playModeBtn.click(() => {
@@ -106,12 +111,12 @@ export default class Player {
 
         this.#audio.addEventListener("play", () => {
             isPlaying = true
-            playBtn.val("⏸")
+            playBtn.html('<i class="fa-solid fa-pause"></i>')
         })
 
         this.#audio.addEventListener("pause", () => {
             isPlaying = false
-            playBtn.val("▶")
+            playBtn.html('<i class="fa-solid fa-play"></i>')
         })
 
         playBtn.click(() => {
@@ -149,10 +154,24 @@ export default class Player {
 
     #playIndexOffset(delta) {
         const tracks = this.#db.getPlayList()
-        const idx = tracks.indexOf(this.currentTrack) + delta
+        const curTrack = this.#db.getCurTrack()
+        const idx = tracks.indexOf(curTrack) + delta
         const len = tracks.length
         const src = tracks[(idx + len) % len]
         this.play(src)
+    }
+
+    #loadTrack(src) {
+        this.#audioSource.attr("src", src)
+        utils.log(`加载：${src}`)
+        this.#audio.load()
+        const name = utils.getMusicName(src)
+        this.#title.text(name)
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: name,
+            })
+        }
     }
 
     play(src) {
@@ -161,19 +180,10 @@ export default class Player {
         if (!src) {
             throw new Error("路径为空")
         }
-        this.currentTrack = src
-        this.#audioSource.attr("src", src)
-        const name = utils.getMusicName(src)
-        this.#title.text(name)
-        utils.log(`播放：${src}`)
-        this.#audio.load()
+        this.#db.setCurTrack(src)
+        this.#loadTrack(src)
         this.#tryPlay()
-        if ("mediaSession" in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: name,
-            })
-        }
-        this.onPlay && this.onPlay(this.currentTrack)
+        this.onPlay && this.onPlay(src)
     }
 
     #tryPlay() {

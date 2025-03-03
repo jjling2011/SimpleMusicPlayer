@@ -80,7 +80,7 @@ export default class LibList {
             this.#searchResult = r
         }
         utils.showStatus(
-            `匹配：${this.#searchResult.length} 总数：${db.length}`,
+            `结果：${this.#searchResult.length} 总数：${db.length}`,
         )
 
         const lastPage =
@@ -93,7 +93,7 @@ export default class LibList {
         const end = Math.min(start + this.#pageSize, this.#searchResult.length)
         this.#musicList.empty()
         if (end <= start) {
-            utils.showStatus("没有匹配数据")
+            utils.showStatus("没有匹配的数据")
             return
         }
         for (let i = start; i < end; i++) {

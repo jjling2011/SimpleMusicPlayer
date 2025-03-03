@@ -72,7 +72,7 @@ export default class PlayList {
     }
 
     refresh(track) {
-        const src = track || this.#player.currentTrack
+        const src = track || this.#db.getCurTrack()
         this.#updateMusicList(src)
     }
 }

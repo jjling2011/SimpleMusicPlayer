@@ -38,7 +38,7 @@ export default class Pager {
         }
 
         const start = Math.max(Math.floor(curPage - this.#showN / 2), 1)
-        const end = Math.min(start + this.#showN, lastPage)
+        const end = Math.min(start + this.#showN - 1, lastPage)
 
         if (start !== 1) {
             const firstBtn = this.#createBtn("<", 1, lastPage)

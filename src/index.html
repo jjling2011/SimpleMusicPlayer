@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>简单音乐播放器</title>
         <link rel="stylesheet" href="./js/styles.css" />
+        <link rel="stylesheet" href="./js/fa/solid.min.css" />
+        <link rel="stylesheet" href="./js/fa/fontawesome.min.css" />
         <script src="./js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
@@ -15,34 +17,30 @@
                     <source id="audio-source" src="" />
                     你的浏览器不支持音乐播放功能
                 </audio>
-                <span id="audio-timestamp">0:00 / 0:00</span>
-                <input
-                    type="button"
-                    value="🔁"
-                    id="audio-play-mode"
-                    title="顺序、随机播放"
-                />
-                <div id="audio-progress-container">
-                    <div id="audio-progress-bar"></div>
+                <button id="audio-play-mode" title="顺序、随机播放">
+                    <i class="fa-solid fa-repeat"></i>
+                </button>
+                <div id="audio-progress-wrapper">
+                    <div class="audio-progress-line">&nbsp;</div>
+                    <div
+                        id="audio-progress-container"
+                        class="audio-progress-line"
+                    >
+                        <div id="audio-progress-bar"></div>
+                    </div>
+                    <span id="audio-timestamp" class="audio-progress-line"
+                        >0:00 / 0:00</span
+                    >
                 </div>
-                <input
-                    type="button"
-                    value="⏮"
-                    id="audio-prev-track"
-                    title="播放上一首歌曲"
-                />
-                <input
-                    type="button"
-                    value="▶"
-                    id="audio-start-pause"
-                    title="播放、暂停"
-                />
-                <input
-                    type="button"
-                    value="⏭"
-                    id="audio-next-track"
-                    title="播放下一首歌曲"
-                />
+                <button id="audio-prev-track" title="播放上一首歌曲">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+                <button id="audio-start-pause" title="播放、暂停">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <button id="audio-next-track" title="播放下一首歌曲">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
             </div>
         </div>
         <div class="box pages-header-bottom">
@@ -68,24 +66,18 @@
             </div>
         </div>
         <div id="pages-div-lib" class="pages-div active">
-            <div class="box">
-                <input
-                    type="button"
-                    value="❌"
-                    id="lib-clear"
-                    title="清空搜索关键词"
-                />
+            <div class="box" id="search-bar">
+                <button id="lib-clear" title="清空搜索关键词">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
                 <input
                     type="text"
                     id="lib-search-box"
                     placeholder="搜索歌曲..."
                 />
-                <input
-                    type="button"
-                    value="🔄"
-                    id="lib-update-db"
-                    title="更新数据库"
-                />
+                <button id="lib-update-db" title="更新数据库">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </button>
             </div>
             <div class="box">
                 <ul id="lib-music-list">

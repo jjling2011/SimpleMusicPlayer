@@ -52,10 +52,16 @@ input[type="button"] {
     align-items: center;
 }
 
+.audio-wrapper button {
+    border: none;
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0);
+}
+
 .audio-control-container {
     flex-grow: 1;
     display: flex;
-    height: 1.5rem;
+    height: 1rem;
     margin: 0 1rem;
     align-items: center;
 }
@@ -69,18 +75,24 @@ input[type="button"] {
     background: rgba(0, 0, 0, 0);
 }
 
-#audio-timestamp {
-    color: gray;
-    font-size: 0.9rem;
+#audio-progress-wrapper {
+    flex-wrap: wrap;
+    flex-grow: 1;
+    display: flex;
+}
+
+.audio-progress-line {
+    width: 100%;
+    text-align: center;
 }
 
 #audio-progress-container {
-    flex-grow: 1;
     cursor: pointer;
     height: 0.3rem;
     background-color: lightgray;
     border-radius: 1rem;
     margin: 0 0.5rem;
+    display: block;
 }
 
 #audio-progress-bar {
@@ -89,6 +101,22 @@ input[type="button"] {
     background-color: #007bff;
     border-radius: 1rem;
     transition: width 0.1s;
+}
+
+#audio-timestamp {
+    color: gray;
+    font-size: 0.9rem;
+}
+
+#search-bar button {
+    font-size: 1.5rem;
+    border: none;
+}
+
+#search-bar input[type="text"] {
+    border: 0.02rem solid darkgray;
+    border-radius: 0.5rem;
+    height: 1.5rem;
 }
 
 .pages-header {
