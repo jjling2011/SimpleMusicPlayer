@@ -43,22 +43,22 @@ export default class DirList {
         })
 
         for (const dir of keys) {
-            const btn = $("<button>")
+            const li = $("<li>")
             const spanNum = $("<span>")
             spanNum.text(`(${cats[dir]})`)
             const spanDir = $("<span>")
             spanDir.text(`${dir}`)
-            btn.append(spanDir)
-            btn.append(spanNum)
+            li.append(spanDir)
+            li.append(spanNum)
 
             if (catsSelected[dir]) {
-                btn.addClass("active")
+                li.addClass("active")
             }
-            btn.click(() => {
+            li.click(() => {
                 that.#db.toggleCat(dir)
                 that.refresh()
             })
-            c.append(btn)
+            c.append(li)
         }
     }
 

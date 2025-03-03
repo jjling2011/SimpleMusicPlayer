@@ -39,7 +39,7 @@ export default class LibList {
         const last = this.#db.getLastUpdateDate()
         if (!last || confirm(`上次更新：${last}\n确定要更新数据库吗？`)) {
             await this.#db.updateMusicDbAsync()
-            alert(`更新完成`)
+            setTimeout(() => alert(`更新完成`), 1)
             this.clearSearchKeyword()
             this.#dirList.refresh()
         }

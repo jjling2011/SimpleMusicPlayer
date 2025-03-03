@@ -12,6 +12,17 @@ export default class Pages {
                 $(`#pages-div-${tag}`).addClass("active")
             })
         }
+
+        const ms = navigator.mediaSession
+        if (ms) {
+            utils.log("注册 滑动 响应函数")
+            ms.setActionHandler("nextslide", () =>
+                utils.showStatus("next slide"),
+            )
+            ms.setActionHandler("previousslide", () =>
+                utils.showStatus("prev slide"),
+            )
+        }
     }
 
     #hideAll() {

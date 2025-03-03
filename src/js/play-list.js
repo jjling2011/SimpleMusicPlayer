@@ -45,9 +45,11 @@ export default class PlayList {
         const start = Math.max(0, (cur - 1) * this.#pageSize)
         const end = Math.min(start + this.#pageSize, list.length)
         if (end <= start) {
-            this.#musicDiv.text("列表为空")
+            this.#musicDiv.text("列表为空，请在<目录>中选取音乐")
             return
         }
+
+        const track = this.#db.getCurTrack()
         for (let i = start; i < end; i++) {
             const url = list[i]
             const name = utils.getMusicName(url)
@@ -55,6 +57,9 @@ export default class PlayList {
             li.text(`${i + 1}. ${name}`)
             li.attr("title", url)
             li.attr("data-src", url)
+            if (track === url) {
+                li.addClass("active")
+            }
             this.#musicDiv.append(li)
         }
     }

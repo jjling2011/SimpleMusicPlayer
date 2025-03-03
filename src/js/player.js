@@ -17,14 +17,11 @@ export default class Player {
         this.#audioSource = $("#audio-source")
 
         this.#audio.addEventListener("ended", () => that.nextTrack())
-        if ("mediaSession" in navigator) {
+        const ms = navigator.mediaSession
+        if (ms) {
             utils.log("注册 <上一首> <下一首> 响应函数")
-            navigator.mediaSession.setActionHandler("nexttrack", () =>
-                that.nextTrack(),
-            )
-            navigator.mediaSession.setActionHandler("previoustrack", () =>
-                that.prevTrack(),
-            )
+            ms.setActionHandler("nexttrack", () => that.nextTrack())
+            ms.setActionHandler("previoustrack", () => that.prevTrack())
         }
 
         this.#initTimeLabel()
@@ -162,9 +159,7 @@ export default class Player {
     }
 
     #loadTrack(src) {
-        this.#audioSource.attr("src", src)
         utils.log(`加载：${src}`)
-        this.#audio.load()
         const name = utils.getMusicName(src)
         this.#title.text(name)
         if ("mediaSession" in navigator) {
@@ -172,6 +167,8 @@ export default class Player {
                 title: name,
             })
         }
+        this.#audioSource.attr("src", src)
+        this.#audio.load()
     }
 
     play(src) {
@@ -180,8 +177,8 @@ export default class Player {
         if (!src) {
             throw new Error("路径为空")
         }
-        this.#db.setCurTrack(src)
         this.#loadTrack(src)
+        this.#db.setCurTrack(src)
         this.#tryPlay()
         this.onPlay && this.onPlay(src)
     }
