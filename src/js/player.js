@@ -24,8 +24,10 @@ export default class Player {
             ms.setActionHandler("previoustrack", () => that.prevTrack())
         }
 
-        this.#initTimeLabel()
-        this.#initProgressContainer()
+        this.#resetTimeLabel()
+        this.#initTimeLabelUpdater()
+
+        this.#initProgressClickHandler()
         this.#initPlayModeButton()
         this.#initPrevNextTrackButtons()
         this.#initPlayButton()
@@ -36,7 +38,7 @@ export default class Player {
         }
     }
 
-    #initProgressContainer() {
+    #initProgressClickHandler() {
         const that = this
         const progContainer = $("#audio-progress-container")
         progContainer.on("click", function (e) {
@@ -67,8 +69,15 @@ export default class Player {
         })
     }
 
-    #initTimeLabel() {
+    #resetTimeLabel() {
+        $("#audio-timestamp").text("0:00 / 0:00")
+        $("#audio-progress-bar").width("0%")
+        $("#audio-progress-buff").width("0%")
+    }
+
+    #initTimeLabelUpdater() {
         const that = this
+
         const timeLabel = $("#audio-timestamp")
         const progBar = $("#audio-progress-bar")
         const bufBar = $("#audio-progress-buff")
@@ -167,6 +176,11 @@ export default class Player {
     }
 
     #loadTrack(src) {
+        if (!src) {
+            const msg = "错误：路径为空！"
+            alert(msg)
+            throw new Error(msg)
+        }
         utils.log(`加载：${src}`)
         const name = utils.getMusicName(src)
         this.#title.text(name)
@@ -175,6 +189,7 @@ export default class Player {
                 title: name,
             })
         }
+        this.#resetTimeLabel()
         this.#audioSource.attr("src", src)
         this.#audio.load()
     }
@@ -182,9 +197,6 @@ export default class Player {
     play(src) {
         this.#audio.pause()
         this.#audio.currentTime = 0
-        if (!src) {
-            throw new Error("路径为空")
-        }
         this.#loadTrack(src)
         this.#db.setCurTrack(src)
         this.#tryPlay(src)
