@@ -4,7 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>简单音乐播放器</title>
-        <link rel="stylesheet" href="./js/styles.css" />
         <link rel="stylesheet" href="./js/fa/solid.min.css" />
         <link rel="stylesheet" href="./js/fa/fontawesome.min.css" />
         <link
@@ -12,6 +11,7 @@
             href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2020%2020'%3E%3Ctext%20x='-2'%20y='15.5'%3E🎵%3C/text%3E%3C/svg%3E"
             type="image/svg+xml"
         />
+        <link rel="stylesheet" href="./js/styles.css" />
         <script src="./js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
@@ -58,24 +58,26 @@
             </div>
             <span id="utils-status"></span>
         </div>
-        <div id="pages-div-dirlist" class="pages-div">
+        <div id="pages-div-dirlist" class="box pages-div">
             <div class="box wrap">
                 <button id="dirlist-select-all">全选</button>
                 <button id="dirlist-inverse-selection">反选</button>
                 <button id="dirlist-clear-selection">不选</button>
                 <span id="dirlist-total"></span>
             </div>
+
             <div class="box wrap">
                 <ul id="dirlist-dirs"></ul>
             </div>
         </div>
-        <div id="pages-div-playlist" class="pages-div active">
+        <div id="pages-div-playlist" class="box pages-div active">
             <div class="box wrap">
                 <button id="playlist-sort-btn">顺序</button>
                 <button id="playlist-shuffle-btn">随机</button>
                 <button id="playlist-reverse-btn">逆序</button>
                 <span id="playlist-total"></span>
             </div>
+
             <div class="box wrap">
                 <ul id="playlist-music-list"></ul>
             </div>
@@ -83,7 +85,7 @@
                 <div class="pager wrap" id="playlist-pager-container"></div>
             </div>
         </div>
-        <div id="pages-div-lib" class="pages-div">
+        <div id="pages-div-lib" class="box pages-div">
             <div class="box" id="search-bar">
                 <button id="lib-clear" title="清空搜索关键词">
                     <i class="fa-solid fa-eraser"></i>

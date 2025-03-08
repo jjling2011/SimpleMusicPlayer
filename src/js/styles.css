@@ -9,15 +9,33 @@ body {
     flex-grow: 1;
     display: flex;
     width: 100vw;
-    max-width: 26rem;
+    /* height: 100vh; */
     margin: 0 auto;
+}
+
+/* 竖屏 */
+@media screen and (orientation: portrait) {
+    body {
+        max-width: 30rem;
+    }
+}
+
+/* 横屏 */
+@media screen and (orientation: landscape) {
+    body {
+        max-width: 60rem;
+    }
 }
 
 footer {
     color: gray;
     font-size: 0.8rem;
-    margin: 0.25rem 0.75rem;
+    margin: 0rem 2rem;
     text-align: right;
+    height: 1.5rem;
+    justify-content: end;
+    display: flex;
+    align-items: center;
 }
 
 footer a {
@@ -64,6 +82,7 @@ input[type="button"] {
     height: 3rem;
     border-radius: 2rem;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .audio-wrapper button {
@@ -170,7 +189,7 @@ input[type="button"] {
 }
 
 .pages-header-wrapper {
-    margin: 0 1rem;
+    margin: 0.5rem 0rem 0 2rem;
 }
 
 .pages-header button {
@@ -185,15 +204,16 @@ input[type="button"] {
 
 .pages-div {
     display: none;
+    margin: 0 auto;
+    flex-direction: column;
     min-height: 28rem;
-    margin: 0;
     border-radius: 0.25rem;
     border: solid 0.02rem lightgray;
     display: none;
 }
 
 .pages-div.active {
-    display: block;
+    display: flex;
 }
 
 .pages-div button {
