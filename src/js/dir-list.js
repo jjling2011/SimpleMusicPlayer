@@ -1,11 +1,13 @@
 export default class DirList {
     #db
     #playList
+    #pages
     #dirsDiv
 
-    constructor(db, playList) {
+    constructor(db, pages, playList) {
         const that = this
         this.#db = db
+        this.#pages = pages
         this.#playList = playList
         this.#dirsDiv = $("#dirlist-dirs")
 
@@ -17,14 +19,21 @@ export default class DirList {
             that.#db.unselectAllCats()
             that.refresh()
         })
+
         $("#dirlist-inverse-selection").click(() => {
             that.#db.inverseCatsSelection()
             that.refresh()
         })
+
+        $("#dirlist-gen-playlist").click(() => {
+            that.#db.replacePlayListBySelectedCats()
+            that.refresh()
+            that.#playList.refresh()
+            that.#pages.show("playlist")
+        })
     }
 
     refresh() {
-        this.#playList.refresh()
         this.#updateDirs()
         this.#reportTotal()
     }
@@ -63,7 +72,7 @@ export default class DirList {
     }
 
     #reportTotal() {
-        const selected = this.#db.getPlayList().length
+        const selected = this.#db.genPlayListBySelectedCats().length
         const all = this.#db.getAllMusic().length
         utils.showText("dirlist-total", `选中：${selected} 共：${all}`)
     }

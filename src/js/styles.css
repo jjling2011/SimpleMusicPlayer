@@ -42,6 +42,42 @@ footer a {
     text-decoration-line: none;
 }
 
+#dialog-form-replace-custom-playlist {
+    z-index: 100;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+#dialog-win-replace-custom-playlist .box {
+    justify-content: center;
+}
+
+#dialog-win-replace-custom-playlist button {
+    margin: 0.25rem;
+}
+#dialog-win-replace-custom-playlist select {
+    height: 1.5rem;
+}
+
+#dialog-win-replace-custom-playlist {
+    background-color: white;
+    z-index: 110;
+    position: relative;
+    margin: auto;
+    top: 30%;
+    width: 80%;
+    border-radius: 0.5rem;
+    max-height: 10rem;
+    max-width: 20rem;
+    display: flex;
+    flex-direction: column;
+}
+
 .box {
     width: 95%;
     display: flex;
@@ -153,11 +189,6 @@ input[type="button"] {
     line-height: 1.5rem;
 }
 
-#dirlist-dirs li {
-    display: flex;
-    align-items: center;
-}
-
 #dirlist-dirs li span:first-child {
     flex-grow: 1;
     text-align: left;
@@ -250,6 +281,11 @@ input[type="button"] {
     justify-content: right;
 }
 
+#playlist-custom-playlist {
+    flex-grow: 1;
+    margin: 0rem 0.25rem;
+}
+
 #dirlist-total,
 #playlist-total,
 #lib-total {
@@ -281,6 +317,10 @@ input[type="button"] {
     padding: 0;
 }
 
+li span:first-of-type {
+    flex-grow: 1;
+}
+
 #lib-music-list li,
 #playlist-music-list li,
 #dirlist-dirs li {
@@ -291,6 +331,8 @@ input[type="button"] {
     word-break: break-word;
     min-height: 1.5rem;
     padding: 0.125rem 0.5rem;
+    display: flex;
+    align-items: center;
 }
 
 #lib-music-list li:hover,

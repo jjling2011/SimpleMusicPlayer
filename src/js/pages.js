@@ -7,11 +7,15 @@ export default class Pages {
         const that = this
         for (const tag of TAGS) {
             $(`#pages-btn-${tag}`).click(() => {
-                that.#hideAll()
-                $(`#pages-btn-${tag}`).addClass("active")
-                $(`#pages-div-${tag}`).addClass("active")
+                that.show(tag)
             })
         }
+    }
+
+    show(tag) {
+        this.#hideAll()
+        $(`#pages-btn-${tag}`).addClass("active")
+        $(`#pages-div-${tag}`).addClass("active")
     }
 
     #hideAll() {

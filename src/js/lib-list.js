@@ -10,12 +10,14 @@ export default class LibList {
     #musicList
     #searchBox
     #pager
+    #playList
 
-    constructor(db, player, dirList) {
+    constructor(db, player, playList, dirList) {
         const that = this
 
         this.#db = db
         this.#player = player
+        this.#playList = playList
         this.#dirList = dirList
 
         this.#searchBox = $(`#lib-search-box`)
@@ -90,7 +92,15 @@ export default class LibList {
         this.#pager.goto(1, lastPage)
     }
 
+    #addOnePlayListMusic(src) {
+        const name = utils.getMusicName(src)
+        utils.showText("lib-total", `添加到列表：${name}`)
+        this.#db.addOnePlayListMusic(src)
+        this.#playList.refresh()
+    }
+
     #updateMusicList(cur) {
+        const that = this
         const start = Math.max((cur - 1) * this.#pageSize, 0)
         const end = Math.min(start + this.#pageSize, this.#searchResult.length)
         this.#musicList.empty()
@@ -102,9 +112,15 @@ export default class LibList {
             const url = this.#searchResult[i]
             const name = utils.getMusicName(url)
             const li = $("<li>")
-            li.text(`${i + 1}. ${name}`)
             li.attr("title", url)
             li.attr("data-src", url)
+            const span = $("<span>")
+            span.attr("data-src", url)
+            span.text(`${i + 1}. ${name}`)
+            const btn = $('<button><i class="fa-solid fa-plus"></i></button>')
+            btn.click(() => that.#addOnePlayListMusic(url))
+            li.append(span)
+            li.append(btn)
             this.#musicList.append(li)
         }
     }

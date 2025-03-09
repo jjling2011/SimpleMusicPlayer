@@ -15,6 +15,7 @@ export default class Database {
             list: [],
             catsAll: {},
             catsSelected: {},
+            customLists: {},
             update: "",
             curTrack: "",
         }
@@ -63,7 +64,50 @@ export default class Database {
         this.#data.catsSelected = catsSelected
     }
 
+    loadCustomPlaylist(name) {
+        const clist = this.#data.customLists[name]
+        if (!clist) {
+            return false
+        }
+        this.#data.list = [...clist]
+        this.#save()
+        return true
+    }
+
+    removeCustomPlayList(name) {
+        delete this.#data.customLists[name]
+        this.#save()
+    }
+
+    addCustomPlayList(name) {
+        this.#data.customLists[name] = [...this.#data.list]
+        this.#save()
+    }
+
+    getCustomPlayListNames() {
+        if (!this.#data.customLists) {
+            this.#data.customLists = {}
+        }
+        return Object.keys(this.#data.customLists)
+    }
+
     #updatePlayList() {
+        const all = this.#data.all
+        this.#data.list = this.#data.list.filter((s) => all.indexOf(s) >= 0)
+        const names = this.getCustomPlayListNames()
+        for (let name of names) {
+            this.#data.customLists[name] = this.#data.customLists[name].filter(
+                (s) => all.indexOf(s) >= 0,
+            )
+        }
+    }
+
+    replacePlayListBySelectedCats() {
+        this.#data.list = this.genPlayListBySelectedCats()
+        this.#save()
+    }
+
+    genPlayListBySelectedCats() {
         const list = []
         const cats = this.#data.catsSelected
         const dirs = Object.keys(cats).filter((k) => cats[k])
@@ -75,7 +119,7 @@ export default class Database {
                 }
             }
         }
-        this.#data.list = list
+        return list
     }
 
     #setAllCats(state) {
@@ -84,7 +128,6 @@ export default class Database {
         for (const key of keys) {
             cats[key] = state
         }
-        this.#updatePlayList()
         this.#save()
     }
 
@@ -98,7 +141,6 @@ export default class Database {
         for (const key of keys) {
             cats[key] = !cats[key]
         }
-        this.#updatePlayList()
         this.#save()
     }
 
@@ -117,6 +159,23 @@ export default class Database {
 
     getLastUpdateDate() {
         return this.#data.update
+    }
+
+    addOnePlayListMusic(src) {
+        if (this.#data.list.indexOf(src) < 0) {
+            this.#data.list.push(src)
+        }
+        this.#save()
+    }
+
+    removeOnePlayListMusic(src) {
+        this.#data.list = this.#data.list.filter((s) => s !== src)
+        this.#save()
+    }
+
+    clearPlayList() {
+        this.#data.list = []
+        this.#save()
     }
 
     reversePlayList() {
@@ -158,7 +217,6 @@ export default class Database {
 
     toggleCat(cat) {
         this.#data.catsSelected[cat] = !this.#data.catsSelected[cat]
-        this.#updatePlayList()
         this.#save()
     }
 

@@ -53,7 +53,7 @@
         <div class="box pages-header-wrapper">
             <div class="pages-header">
                 <button id="pages-btn-lib">库</button>
-                <button id="pages-btn-playlist" class="active">歌单</button>
+                <button id="pages-btn-playlist" class="active">列表</button>
                 <button id="pages-btn-dirlist">目录</button>
             </div>
             <span id="utils-status"></span>
@@ -63,6 +63,9 @@
                 <button id="dirlist-select-all">全选</button>
                 <button id="dirlist-inverse-selection">反选</button>
                 <button id="dirlist-clear-selection">不选</button>
+                <button id="dirlist-gen-playlist" title="覆盖当前播放列表">
+                    生成列表
+                </button>
                 <span id="dirlist-total"></span>
             </div>
             <div class="box wrap">
@@ -74,7 +77,17 @@
                 <button id="playlist-sort-btn">顺序</button>
                 <button id="playlist-shuffle-btn">随机</button>
                 <button id="playlist-reverse-btn">逆序</button>
+                <button id="playlist-clear-btn">清空</button>
                 <span id="playlist-total"></span>
+            </div>
+            <div class="box">
+                <select
+                    name="custom-playlist-names"
+                    id="playlist-custom-playlist"
+                ></select>
+                <button id="playlist-add-new-custom-playlist">新建</button>
+                <button id="playlist-replace-custom-playlist">替换</button>
+                <button id="playlist-remove-custom-playlist">删除</button>
             </div>
             <div class="box wrap">
                 <ul id="playlist-music-list"></ul>
@@ -115,6 +128,16 @@
             >
         </footer>
     </body>
+    <div id="dialog-form-replace-custom-playlist">
+        <div id="dialog-win-replace-custom-playlist">
+            <span class="box">选择要替换的歌单</span>
+            <select id="dialog-custom-playlist-names" class="box"></select>
+            <div class="box">
+                <button id="dialog-custom-playlist-ok">确定</button>
+                <button id="dialog-custom-playlist-cancel">取消</button>
+            </div>
+        </div>
+    </div>
     <script type="module">
         import Utils from "./js/utils.js"
         import Player from "./js/player.js"
@@ -131,14 +154,15 @@
         const db = new Database()
         const player = new Player(db)
         const playList = new PlayList(db, player)
-        const dirList = new DirList(db, playList)
-        const libList = new LibList(db, player, dirList)
+        const dirList = new DirList(db, pages, playList)
+        const libList = new LibList(db, player, playList, dirList)
 
         if (db.getAllMusic().length < 1) {
             await db.updateMusicDbAsync()
             $("#pages-btn-lib").trigger("click")
         }
         libList.clearSearchKeyword()
+        playList.refresh()
         dirList.refresh()
     </script>
 </html>
