@@ -84,11 +84,15 @@ footer a {
 
 #dialog-win-replace-custom-playlist select {
     height: 1.5rem;
+    flex-grow: 1;
 }
 
+#dialog-alert-window pre,
 #dialog-confirm-window pre,
 #dialog-prompt-window pre {
+    word-break: break-all;
     font-size: 1rem;
+    white-space: pre-wrap;
 }
 
 #dialog-win-replace-custom-playlist,
@@ -323,6 +327,7 @@ input[type="button"] {
 #playlist-custom-playlist {
     flex-grow: 1;
     margin: 0rem 0.25rem;
+    max-width: 53%;
 }
 
 #dirlist-total,

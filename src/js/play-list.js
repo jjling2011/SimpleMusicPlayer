@@ -6,7 +6,7 @@ export default class PlayList {
 
     #db
     #player
-    #musicDiv
+    #musicListUl
     #customPlayListSelect
     list
 
@@ -18,8 +18,10 @@ export default class PlayList {
         this.#player.onPlay = (track) => this.refresh(track)
         this.#pager = new Pager("playlist-pager-container", 5)
         this.#pager.onClick = (n) => that.#genMusicList(n)
-        this.#musicDiv = $("#playlist-music-list")
+        this.#musicListUl = $("#playlist-music-list")
         this.#customPlayListSelect = $("#playlist-custom-playlist")
+
+        this.#addMusicListUlDragDropSupport()
 
         $("#playlist-sort-btn").click(() => {
             this.#db.sortPlayList()
@@ -75,6 +77,45 @@ export default class PlayList {
         })
 
         this.#initReplaceCustomPlayListDialog()
+    }
+
+    #addMusicListUlDragDropSupport() {
+        const that = this
+        let dest = null
+        let src = null
+
+        this.#musicListUl.on("dragstart", (evt) => {
+            dest = null
+            src = $(evt.target)
+        })
+
+        this.#musicListUl.on("dragover", (evt) => {
+            dest = $(evt.target)
+            evt.preventDefault()
+        })
+
+        this.#musicListUl.on("dragend", () => {
+            utils.log("drag end")
+            const d = dest
+            const s = src
+            if (!d || !s) {
+                return
+            }
+
+            const si = s.attr("data-index")
+            const di = d.attr("data-index")
+            if (!si || !di) {
+                return
+            }
+
+            const idxFrom = parseInt(si)
+            const idxTo = parseInt(di)
+            if (idxFrom === NaN || idxTo === NaN || idxFrom === idxTo) {
+                return
+            }
+            that.#db.movePlayListMusic(idxFrom, idxTo)
+            that.refresh()
+        })
     }
 
     #initReplaceCustomPlayListDialog() {
@@ -137,11 +178,11 @@ export default class PlayList {
     #genMusicList(cur) {
         const that = this
         const list = this.list
-        this.#musicDiv.empty()
+        this.#musicListUl.empty()
         const start = Math.max(0, (cur - 1) * this.#pageSize)
         const end = Math.min(start + this.#pageSize, list.length)
         if (end <= start) {
-            this.#musicDiv.text("列表为空，请在<目录>中选取音乐")
+            this.#musicListUl.text("列表为空，请在<目录>中选取音乐")
             return
         }
 
@@ -151,9 +192,13 @@ export default class PlayList {
             const name = utils.getMusicName(url)
             const li = $("<li>")
             li.attr("title", url)
+            li.attr("data-index", i)
+            li.attr("draggable", "true")
 
             const span = $("<span>")
             span.text(`${i + 1}. ${name}`)
+            span.attr("data-index", i)
+            span.attr("draggable", "true")
             span.click(() => that.#player.play(url))
             li.append(span)
 
@@ -178,7 +223,7 @@ export default class PlayList {
             if (track === url) {
                 li.addClass("active")
             }
-            this.#musicDiv.append(li)
+            this.#musicListUl.append(li)
         }
     }
 
