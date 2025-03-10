@@ -5,15 +5,22 @@ export default class DirList {
     #dirsUl
 
     constructor(db, playList) {
+        const that = this
         this.#db = db
         this.#playList = playList
         this.#navBar = $("#dirlist-nav-bar")
         this.#dirsUl = $("#dirlist-dirs")
+
+        $("#dirlist-clear-btn").click(() => {
+            that.#db.clearPlayList()
+            that.#playList.refresh()
+        })
     }
 
     refresh() {
         const curDir = this.#db.getCurDir()
         const dirInfo = this.#db.getAllDirs()
+        console.log("refresh: dir:", curDir, "info:", dirInfo)
         this.#genNavBar(curDir)
         this.#genDirs(curDir, dirInfo)
     }
@@ -47,37 +54,54 @@ export default class DirList {
         }
     }
 
-    #genDirs(curDir, dirInfo) {
-        const that = this
-        const c = this.#dirsUl
-        const dirs = Object.keys(dirInfo)
+    #getSubDirs(dir, dirs) {
+        console.log(`getSubDirs: dir: ${dir}`, `dirs:`, dirs)
 
-        const depth = curDir.split("/").length + 1
-        const matches = dirs
-            .filter((d) => d.startsWith(curDir) && d !== curDir)
+        const depth = dir.split("/").length + 1
+        const r = dirs
+            .filter((d) => d.startsWith(dir) && d !== dir)
             .filter((d) => d.split("/").length === depth)
-            .sort((a, b) => utils.compareString(a, b))
 
-        c.empty()
-        if (matches.length < 1) {
-            c.append($("<span>当前目录没有子目录</span>"))
+        r.sort((a, b) => utils.compareString(a, b))
+        return r
+    }
+
+    #genDirs(curDir, dirInfo) {
+        console.log(`gendirs: dir: ${curDir}`, `info:`, dirInfo)
+        const that = this
+        const ul = this.#dirsUl
+        const dirs = Object.keys(dirInfo)
+        const subDirs = this.#getSubDirs(curDir, dirs)
+
+        ul.empty()
+        if (subDirs.length < 1) {
+            ul.append($("<span>当前目录没有子目录</span>"))
             return
         }
-        for (let dir of matches) {
-            const d = dir
+        for (let subDir of subDirs) {
+            const sub = subDir
+            const sub2 = that.#getSubDirs(sub, dirs)
+            const s2c = sub2.length
+            const mc = dirInfo[subDir]
+
             function cd() {
-                that.#db.setCurDir(d)
+                that.#db.setCurDir(sub)
                 that.refresh()
             }
 
             const li = $("<li>")
 
             const spanTitle = $("<span>")
-            spanTitle.text(`${dir}`)
-            spanTitle.click(() => cd())
+            spanTitle.text(`${subDir}`)
+            spanTitle.attr(`title`, `歌曲：${mc} 子目录: ${s2c}`)
+            if (s2c) {
+                spanTitle.click(() => cd())
+            } else {
+                spanTitle.click(() => utils.alert(`当前目录没有子目录`))
+            }
             li.append(spanTitle)
 
-            const fullDir = `./${dir}`
+            const fullDir = `./${subDir}`
             function add() {
                 const all = that.#db.getAllMusic()
                 const m = all.filter((s) => s.startsWith(fullDir))
@@ -87,7 +111,9 @@ export default class DirList {
             }
 
             const spanCount = $("<span>")
-            spanCount.text(`(${dirInfo[dir]})`)
+            spanCount.text(`(${mc}/${s2c})`)
+            spanCount.attr(`title`, `歌曲：${mc} 子目录: ${s2c}`)
+
             spanCount.click(() => add())
             li.append(spanCount)
 
@@ -97,7 +123,7 @@ export default class DirList {
             btnAdd.click(() => add())
             li.append(btnAdd)
 
-            c.append(li)
+            ul.append(li)
         }
     }
 }

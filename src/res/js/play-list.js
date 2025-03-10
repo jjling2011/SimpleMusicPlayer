@@ -152,7 +152,7 @@ export default class PlayList {
         const start = Math.max(0, (cur - 1) * this.#pageSize)
         const end = Math.min(start + this.#pageSize, list.length)
         if (end <= start) {
-            this.#musicListUl.text("列表为空，请在<目录>中选取音乐")
+            this.#musicListUl.text("列表为空，请在 <目录> 中选取音乐")
             return
         }
 
@@ -211,7 +211,9 @@ export default class PlayList {
     refresh(track) {
         const src = track || this.#db.getCurTrack()
         this.#updateMusicList(src)
-        utils.showText("playlist-total", `歌曲：${this.list.length}`)
+        const total = this.list.length
+        utils.showText("playlist-total", `歌曲：${total}`)
+        utils.showText("dirlist-total", `歌曲：${total}`)
         const n = this.#db.getCustomPlayListNames().length || 0
         utils.showText("custom-playlist-total", `歌单：${n}`)
     }
