@@ -13,8 +13,8 @@ export default class Database {
             isRandom: true,
             all: [],
             list: [],
-            catsAll: {},
-            catsSelected: {},
+            allDirs: {},
+            curDir: "",
             customLists: {},
             update: "",
             curTrack: "",
@@ -46,7 +46,7 @@ export default class Database {
                 .then((s) => {
                     that.#data.all = JSON.parse(s || "[]")
                     that.#data.update = new Date().toLocaleString()
-                    that.#updateCats()
+                    that.#updateDirs()
                     that.#updatePlayList()
                     that.#save()
                     utils.alert("更新完成")
@@ -57,20 +57,17 @@ export default class Database {
         return done
     }
 
-    #updateCats() {
-        const catsAll = {}
-        const catsSelected = {}
+    #updateDirs() {
+        const allDirs = {}
         for (const url of this.#data.all) {
             const dirs = url.split("/").filter((s) => s && s !== ".")
             let dir = ""
             for (let index = 0; index < dirs.length - 1; index++) {
                 dir = `${dir}${dirs[index]}/`
-                catsAll[dir] = (catsAll[dir] || 0) + 1
-                catsSelected[dir] = this.#data.catsSelected[dir] || false
+                allDirs[dir] = (allDirs[dir] || 0) + 1
             }
         }
-        this.#data.catsAll = catsAll
-        this.#data.catsSelected = catsSelected
+        this.#data.allDirs = allDirs
     }
 
     loadCustomPlaylist(name) {
@@ -120,47 +117,6 @@ export default class Database {
         this.#data.list = [...list, ...slim]
         this.#save()
         return slim.length
-    }
-
-    genPlayListBySelectedCats() {
-        const list = []
-        const cats = this.#data.catsSelected
-        const dirs = Object.keys(cats).filter((k) => cats[k])
-        for (const url of this.#data.all) {
-            for (const dir of dirs) {
-                if (url.indexOf(dir) >= 0) {
-                    list.push(url)
-                    break
-                }
-            }
-        }
-        return list
-    }
-
-    #setAllCats(state) {
-        const cats = this.#data.catsSelected
-        const keys = Object.keys(cats)
-        for (const key of keys) {
-            cats[key] = state
-        }
-        this.#save()
-    }
-
-    selectAllCats() {
-        this.#setAllCats(true)
-    }
-
-    inverseCatsSelection() {
-        const cats = this.#data.catsSelected
-        const keys = Object.keys(cats)
-        for (const key of keys) {
-            cats[key] = !cats[key]
-        }
-        this.#save()
-    }
-
-    unselectAllCats() {
-        this.#setAllCats(false)
     }
 
     setCurTrack(track) {
@@ -226,24 +182,24 @@ export default class Database {
     }
 
     getPlayList() {
-        return this.#data.list
+        return this.#data.list || []
     }
 
     getAllMusic() {
-        return this.#data.all
+        return this.#data.all || []
     }
 
-    getCatsAll() {
-        return this.#data.catsAll
+    getCurDir() {
+        return this.#data.curDir
     }
 
-    getCatsSelected() {
-        return this.#data.catsSelected
-    }
-
-    toggleCat(cat) {
-        this.#data.catsSelected[cat] = !this.#data.catsSelected[cat]
+    setCurDir(dir) {
+        this.#data.curDir = dir
         this.#save()
+    }
+
+    getAllDirs() {
+        return this.#data.allDirs || {}
     }
 
     #saveSettingsCore() {

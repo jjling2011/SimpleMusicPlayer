@@ -1,79 +1,103 @@
 export default class DirList {
     #db
     #playList
-    #pages
-    #dirsDiv
+    #navBar
+    #dirsUl
 
-    constructor(db, pages, playList) {
-        const that = this
+    constructor(db, playList) {
         this.#db = db
-        this.#pages = pages
         this.#playList = playList
-        this.#dirsDiv = $("#dirlist-dirs")
-
-        $("#dirlist-select-all").click(() => {
-            that.#db.selectAllCats()
-            that.refresh()
-        })
-        $("#dirlist-clear-selection").click(() => {
-            that.#db.unselectAllCats()
-            that.refresh()
-        })
-
-        $("#dirlist-inverse-selection").click(() => {
-            that.#db.inverseCatsSelection()
-            that.refresh()
-        })
-
-        $("#dirlist-add-to-playlist").click(() => {
-            const list = that.#db.genPlayListBySelectedCats()
-            const n = that.#db.addToPlayList(list)
-            that.#playList.refresh()
-            utils.alert(`添加了 ${n} 首歌曲`)
-        })
+        this.#navBar = $("#dirlist-nav-bar")
+        this.#dirsUl = $("#dirlist-dirs")
     }
 
     refresh() {
-        this.#updateDirs()
-        this.#reportTotal()
+        const curDir = this.#db.getCurDir()
+        const dirInfo = this.#db.getAllDirs()
+        this.#genNavBar(curDir)
+        this.#genDirs(curDir, dirInfo)
     }
 
-    #updateDirs() {
+    #genNavBar(curDir) {
         const that = this
-        const c = this.#dirsDiv
-        c.empty()
 
-        const cats = this.#db.getCatsAll()
-        const catsSelected = this.#db.getCatsSelected()
-        const keys = Object.keys(cats).sort((a, b) => {
-            const pna = a.split("/").filter((s) => s).length
-            const pnb = b.split("/").filter((s) => s).length
-            return pna - pnb || cats[b] - cats[a] || utils.compareString(a, b)
+        const bar = this.#navBar
+        bar.empty()
+
+        const root = $("<button>root</button>")
+        root.click(() => {
+            that.#db.setCurDir("")
+            that.refresh()
         })
+        bar.append(root)
 
-        for (const dir of keys) {
-            const li = $("<li>")
-            const spanNum = $("<span>")
-            spanNum.text(`(${cats[dir]})`)
-            const spanDir = $("<span>")
-            spanDir.text(`${dir}`)
-            li.append(spanDir)
-            li.append(spanNum)
-
-            if (catsSelected[dir]) {
-                li.addClass("active")
-            }
-            li.click(() => {
-                that.#db.toggleCat(dir)
+        const dirs = (curDir || "").split("/").filter((s) => s)
+        let path = ""
+        for (let dir of dirs) {
+            path = `${path}${dir}/`
+            const p = path
+            const btn = $("<button>")
+            btn.text(dir)
+            btn.click(() => {
+                that.#db.setCurDir(p)
                 that.refresh()
             })
-            c.append(li)
+            bar.append($(`<span>&gt;</span>`))
+            bar.append(btn)
         }
     }
 
-    #reportTotal() {
-        const selected = this.#db.genPlayListBySelectedCats().length
-        const all = this.#db.getAllMusic().length
-        utils.showText("dirlist-total", `( ${selected} / ${all} )`)
+    #genDirs(curDir, dirInfo) {
+        const that = this
+        const c = this.#dirsUl
+        const dirs = Object.keys(dirInfo)
+
+        const depth = curDir.split("/").length + 1
+        const matches = dirs
+            .filter((d) => d.startsWith(curDir) && d !== curDir)
+            .filter((d) => d.split("/").length === depth)
+            .sort((a, b) => utils.compareString(a, b))
+
+        c.empty()
+        if (matches.length < 1) {
+            c.append($("<span>当前目录没有子目录</span>"))
+            return
+        }
+        for (let dir of matches) {
+            const d = dir
+            function cd() {
+                that.#db.setCurDir(d)
+                that.refresh()
+            }
+
+            const li = $("<li>")
+
+            const spanTitle = $("<span>")
+            spanTitle.text(`${dir}`)
+            spanTitle.click(() => cd())
+            li.append(spanTitle)
+
+            const fullDir = `./${dir}`
+            function add() {
+                const all = that.#db.getAllMusic()
+                const m = all.filter((s) => s.startsWith(fullDir))
+                const n = that.#db.addToPlayList(m)
+                that.#playList.refresh()
+                utils.alert(`添加了 ${n} 首歌曲`)
+            }
+
+            const spanCount = $("<span>")
+            spanCount.text(`(${dirInfo[dir]})`)
+            spanCount.click(() => add())
+            li.append(spanCount)
+
+            const btnAdd = $(
+                '<button title="添加到列表"><i class="fa-solid fa-plus"></i></button>',
+            )
+            btnAdd.click(() => add())
+            li.append(btnAdd)
+
+            c.append(li)
+        }
     }
 }

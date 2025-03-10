@@ -291,6 +291,10 @@ input[type="button"] {
     word-break: break-word;
 }
 
+#dirlist-dirs li span:last-of-type {
+    color: gray;
+}
+
 .pages-div li button {
     border: none;
     font-size: 1.25rem;

@@ -59,65 +59,7 @@
             </div>
             <span id="utils-status"></span>
         </div>
-        <div id="pages-div-about" class="box pages-div">
-            <div class="box wrap">
-                <span>
-                    <b>使用说明</b><br />
-                    首次使用时会自动从“serv.php”读取数据到“库”中。
-                    然后通过搜索文件名，或者在“目录”中点选文件夹，把歌曲添加到“列表”。
-                    播放器会一直循环播放列表里面的歌曲。
-                    点击列表里面的“新建”按钮，可以把当前列表保存成歌单。
-                    列表中第一行按钮操作歌曲，第二行按钮操作歌单。<br />
-                    <br />
-                    <b>项目信息</b><br />
-                    <a
-                        style="word-break: break-all"
-                        href="https://github.com/jjling2011/SimpleWebMusicPlayer/"
-                        target="_blank"
-                        >https://github.com/jjling2011/SimpleWebMusicPlayer/</a
-                    >
-                </span>
-            </div>
-        </div>
-        <div id="pages-div-dirlist" class="box pages-div">
-            <div class="box wrap">
-                <button id="dirlist-select-all">全选</button>
-                <button id="dirlist-inverse-selection">反选</button>
-                <button id="dirlist-clear-selection">不选</button>
-                <button
-                    id="dirlist-add-to-playlist"
-                    title="选中的歌曲添加到列表"
-                >
-                    加入列表
-                </button>
-                <span class="span-total" id="dirlist-total"></span>
-            </div>
-            <div class="box wrap">
-                <ul id="dirlist-dirs"></ul>
-            </div>
-        </div>
-        <div id="pages-div-playlist" class="box pages-div active">
-            <div class="box wrap custom-playlist-controls">
-                <button id="playlist-sort-btn">顺序</button>
-                <button id="playlist-reverse-btn">逆序</button>
-                <button id="playlist-shuffle-btn">随机</button>
-                <button id="playlist-clear-btn">清空</button>
-                <span class="span-total" id="playlist-total"></span>
-            </div>
-            <div class="box wrap custom-playlist-controls">
-                <button id="playlist-add-new-custom-playlist">新建</button>
-                <button id="playlist-replace-custom-playlist">替换</button>
-                <button id="playlist-load-custom-playlist">加载</button>
-                <button id="playlist-remove-custom-playlist">删除</button>
-                <span class="span-total" id="custom-playlist-total"></span>
-            </div>
-            <div class="box wrap">
-                <ul id="playlist-music-list"></ul>
-            </div>
-            <div class="box hcenter">
-                <div class="pager wrap" id="playlist-pager-container"></div>
-            </div>
-        </div>
+
         <div id="pages-div-lib" class="box pages-div">
             <div class="box" id="search-bar">
                 <button id="lib-clear" title="清空搜索关键词">
@@ -154,6 +96,56 @@
                 <div class="pager wrap" id="lib-pager-container"></div>
             </div>
         </div>
+
+        <div id="pages-div-playlist" class="box pages-div active">
+            <div class="box wrap custom-playlist-controls">
+                <button id="playlist-sort-btn">顺序</button>
+                <button id="playlist-reverse-btn">逆序</button>
+                <button id="playlist-shuffle-btn">随机</button>
+                <button id="playlist-clear-btn">清空</button>
+                <span class="span-total" id="playlist-total"></span>
+            </div>
+            <div class="box wrap custom-playlist-controls">
+                <button id="playlist-add-new-custom-playlist">新建</button>
+                <button id="playlist-replace-custom-playlist">替换</button>
+                <button id="playlist-load-custom-playlist">加载</button>
+                <button id="playlist-remove-custom-playlist">删除</button>
+                <span class="span-total" id="custom-playlist-total"></span>
+            </div>
+            <div class="box wrap">
+                <ul id="playlist-music-list"></ul>
+            </div>
+            <div class="box hcenter">
+                <div class="pager wrap" id="playlist-pager-container"></div>
+            </div>
+        </div>
+        <div id="pages-div-dirlist" class="box pages-div">
+            <div class="box wrap" id="dirlist-nav-bar"></div>
+            <div class="box wrap">
+                <ul id="dirlist-dirs"></ul>
+            </div>
+        </div>
+        <div id="pages-div-about" class="box pages-div">
+            <div class="box wrap">
+                <span>
+                    <b>使用说明</b><br />
+                    首次使用时会自动从“serv.php”读取数据到“库”中。
+                    然后通过搜索文件名，或者在“目录”中点选文件夹，把歌曲添加到“列表”。
+                    播放器会一直循环播放列表里面的歌曲。
+                    点击列表里面的“新建”按钮，可以把当前列表保存成歌单。
+                    列表中第一行按钮操作歌曲，第二行按钮操作歌单。<br />
+                    <br />
+                    <b>项目信息</b><br />
+                    <a
+                        style="word-break: break-all"
+                        href="https://github.com/jjling2011/SimpleWebMusicPlayer/"
+                        target="_blank"
+                        >https://github.com/jjling2011/SimpleWebMusicPlayer/</a
+                    >
+                </span>
+            </div>
+        </div>
+
         <footer>
             <a
                 href="https://github.com/jjling2011/SimpleWebMusicPlayer/"
@@ -228,7 +220,7 @@
         const db = new Database()
         const player = new Player(db)
         const playList = new PlayList(db, player)
-        const dirList = new DirList(db, pages, playList)
+        const dirList = new DirList(db, playList)
         const libList = new LibList(db, player, playList, dirList)
 
         if (db.getAllMusic().length < 1) {
