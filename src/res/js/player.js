@@ -140,10 +140,8 @@ export default class Player {
             }
             const src = that.#audioSource.attr("src")
             if (src) {
-                utils.log(`try play: ${src}`)
                 that.#tryPlay(src)
             } else {
-                utils.log(`nextTrack()`)
                 that.nextTrack()
             }
         })
@@ -203,7 +201,9 @@ export default class Player {
     }
 
     #tryPlay(src) {
-        this.#audio.play().catch((err) => utils.log(`play err: ${err.message}`))
+        this.#audio
+            .play()
+            .catch((err) => utils.log(`ignore play err: ${err.message}`))
         this.onPlay && this.onPlay(src)
     }
 }

@@ -1,18 +1,19 @@
 export default class Utils {
-    #status
-
     #confirmResolve
     #confirmReject
     #promptResolve
     #promptReject
+    #selectResolve
+    #selectReject
 
     constructor() {
-        this.#status = $("#utils-status")
         $("#dialog-alert-ok").click(() => $("#dialog-alert").hide())
         $("#dialog-confirm-ok").click(() => this.#confirmResolve?.())
         $("#dialog-confirm-cancel").click(() => this.#confirmReject?.())
         $("#dialog-prompt-ok").click(() => this.#promptResolve?.())
         $("#dialog-prompt-cancel").click(() => this.#promptReject?.())
+        $("#dialog-select-ok").click(() => this.#selectResolve?.())
+        $("#dialog-select-cancel").click(() => this.#selectReject?.())
     }
 
     // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
@@ -20,6 +21,34 @@ export default class Utils {
         const element = arr[fromIndex]
         arr.splice(fromIndex, 1)
         arr.splice(toIndex, 0, element)
+    }
+
+    async select(title, list) {
+        $("#dialog-select-title").text(title)
+        const sel = $("#dialog-select-content")
+        sel.empty()
+        for (let v of list) {
+            const option = $("<option>")
+            option.val(v)
+            option.text(v)
+            sel.append(option)
+        }
+
+        const p = new Promise((resolve, reject) => {
+            this.#selectResolve = resolve
+            this.#selectReject = reject
+        })
+        const dialog = $("#dialog-select")
+        dialog.show()
+        try {
+            await p
+            const r = $("#dialog-select-content").val()
+            return r
+        } catch {
+        } finally {
+            dialog.hide()
+        }
+        return null
     }
 
     // https://github.com/n3r4zzurr0/svg-spinners/blob/main/svg-css/3-dots-bounce.svg
@@ -146,7 +175,7 @@ export default class Utils {
     }
 
     getMusicName(url) {
-        const ps = (url || "").split(/[/]/)
+        const ps = (url || "").split("/")
         if (ps.length < 1) {
             return ""
         }

@@ -1,8 +1,9 @@
 export default class Pager {
     #container
     #showN
+    #lbPageNum
 
-    onClick = function (n) {
+    onClick = function (clickPageNum, totalPageNum) {
         // click page [1, ..., n]
         console.log(`call onClick(${n})`)
         console.log(`please override Pager.onClick(n) function`)
@@ -16,7 +17,6 @@ export default class Pager {
     goto(cur, last) {
         const end = Math.max(1, last)
         const c = Math.min(Math.max(1, cur), end)
-        // console.log(`goto: ${cur}, ${last}`)
         this.onClick(c, end)
         this.#draw(c, end)
     }
@@ -30,6 +30,7 @@ export default class Pager {
     }
 
     #draw(curPage, lastPage) {
+        const that = this
         const c = this.#container
 
         c.empty()
@@ -62,15 +63,24 @@ export default class Pager {
 
         const s = $("<div>")
         const lbPageNum = $('<input type="text">')
+        that.#lbPageNum = lbPageNum
+
         const btnJump = $("<button>Go</button>")
 
         btnJump.click(() => {
             const pn = parseInt(lbPageNum.val()) || 1
             this.goto(pn, lastPage)
+            setTimeout(() => {
+                that.#lbPageNum?.focus()
+            }, 200)
         })
+
         lbPageNum.keydown((evt) => {
             if (evt.key === "Enter") {
                 btnJump.trigger("click")
+                setTimeout(() => {
+                    that.#lbPageNum?.focus()
+                }, 200)
             }
         })
 

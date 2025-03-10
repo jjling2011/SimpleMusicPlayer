@@ -3,6 +3,7 @@ import Pager from "./pager.js"
 export default class LibList {
     #pageSize = 10
     #searchResult = []
+    #curResult = []
 
     #db
     #player
@@ -28,6 +29,18 @@ export default class LibList {
         this.#musicList = $(`#lib-music-list`)
         this.#pager = new Pager("lib-pager-container", 5)
         this.#pager.onClick = (n) => that.#updateMusicList(n)
+
+        $(`#lib-add-cur-page-to-playlist`).click(() => {
+            const n = that.#db.addToPlayList(that.#curResult)
+            that.#playList.refresh()
+            utils.alert(`添加了 ${n} 首歌曲`)
+        })
+
+        $(`#lib-add-result-to-playlist`).click(() => {
+            const n = that.#db.addToPlayList(that.#searchResult)
+            that.#playList.refresh()
+            utils.alert(`添加了 ${n} 首歌曲`)
+        })
     }
 
     async #confirmUpdateMusicDb() {
@@ -36,12 +49,9 @@ export default class LibList {
             !last ||
             (await utils.confirm(`上次更新：${last}\n确定要更新数据库吗？`))
         ) {
-            utils.log(`perform update`)
             await this.#db.updateMusicDbAsync()
             this.clearSearchKeyword()
             this.#dirList.refresh()
-        } else {
-            utils.log(`cancel`)
         }
     }
 
@@ -82,7 +92,7 @@ export default class LibList {
         }
         utils.showText(
             "lib-total",
-            `结果：${this.#searchResult.length} 共：${db.length}`,
+            `匹配：${this.#searchResult.length} 共：${db.length}`,
         )
 
         const lastPage =
@@ -92,20 +102,16 @@ export default class LibList {
 
     #addOnePlayListMusic(src) {
         const name = utils.getMusicName(src)
-        utils.showText("lib-total", `添加到列表：${name}`)
-        this.#db.addOnePlayListMusic(src)
-        this.#playList.refresh()
+        const n = this.#db.addToPlayList([src])
+        const msg = n > 0 ? `添加 [${name}] 成功` : `已存在：[${name}]`
+        utils.showText("lib-total", msg)
+        if (n) {
+            this.#playList.refresh()
+        }
     }
 
-    #updateMusicList(cur) {
+    #genMusicList(start, end) {
         const that = this
-        const start = Math.max((cur - 1) * this.#pageSize, 0)
-        const end = Math.min(start + this.#pageSize, this.#searchResult.length)
-        this.#musicList.empty()
-        if (end <= start) {
-            utils.showText("lib-total", "没有匹配的数据")
-            return
-        }
         for (let i = start; i < end; i++) {
             const url = this.#searchResult[i]
             const name = utils.getMusicName(url)
@@ -133,5 +139,19 @@ export default class LibList {
 
             this.#musicList.append(li)
         }
+    }
+
+    #updateMusicList(cur) {
+        const start = Math.max((cur - 1) * this.#pageSize, 0)
+        const end = Math.min(start + this.#pageSize, this.#searchResult.length)
+        this.#musicList.empty()
+        if (end <= start) {
+            this.#curResult = []
+            utils.showText("lib-total", "没有匹配的数据")
+            return
+        }
+
+        this.#curResult = this.#searchResult.slice(start, end)
+        this.#genMusicList(start, end)
     }
 }

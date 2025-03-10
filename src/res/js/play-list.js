@@ -7,7 +7,6 @@ export default class PlayList {
     #db
     #player
     #musicListUl
-    #customPlayListSelect
     list
 
     constructor(db, player) {
@@ -19,64 +18,75 @@ export default class PlayList {
         this.#pager = new Pager("playlist-pager-container", 5)
         this.#pager.onClick = (n) => that.#genMusicList(n)
         this.#musicListUl = $("#playlist-music-list")
-        this.#customPlayListSelect = $("#playlist-custom-playlist")
 
         this.#addMusicListUlDragDropSupport()
 
         $("#playlist-sort-btn").click(() => {
-            this.#db.sortPlayList()
+            that.#db.sortPlayList()
             that.refresh()
         })
         $("#playlist-shuffle-btn").click(() => {
-            this.#db.shufflePlayList()
+            that.#db.shufflePlayList()
             that.refresh()
         })
         $("#playlist-reverse-btn").click(() => {
-            this.#db.reversePlayList()
+            that.#db.reversePlayList()
             that.refresh()
         })
         $("#playlist-clear-btn").click(() => {
-            this.#db.clearPlayList()
+            that.#db.clearPlayList()
             that.refresh()
         })
 
-        this.#customPlayListSelect.on("change", () => {
-            const name = this.#customPlayListSelect.val()
-            const first = this.#customPlayListSelect.children().first().val()
-            if (!name || name === first) {
+        async function selectCustomPlayListName(tag) {
+            const names = that.#db.getCustomPlayListNames()
+            if (!names || names.length < 1) {
+                utils.alert(`没有歌单可选，请先新建歌单。`)
                 return
             }
-            const ok = this.#db.loadCustomPlaylist(name)
+            const name = await utils.select(`请选择要${tag}的歌单名：`, names)
+            return name
+        }
+
+        $("#playlist-load-custom-playlist").click(async () => {
+            const name = await selectCustomPlayListName("加载")
+            if (!name) {
+                return
+            }
+            const ok = that.#db.loadCustomPlaylist(name)
             if (ok) {
-                this.refresh()
-                this.#selectCustomPlaylistName(name)
+                that.refresh()
             } else {
                 utils.alert(`加载失败`)
             }
         })
 
-        $("#playlist-remove-custom-playlist").click(async () => {
-            const name = this.#customPlayListSelect.val()
-            if (!(await utils.confirm(`删除 [${name}] ？`))) {
+        $("#playlist-replace-custom-playlist").click(async () => {
+            const name = await selectCustomPlayListName("替换")
+            if (!name) {
                 return
             }
-            this.#db.removeCustomPlayList(name)
-            this.refresh()
-            this.#selectCustomPlaylistName()
+            that.#db.addCustomPlayList(name)
+            that.refresh()
+        })
+
+        $("#playlist-remove-custom-playlist").click(async () => {
+            const name = await selectCustomPlayListName("删除")
+            if (!name) {
+                return
+            }
+            that.#db.removeCustomPlayList(name)
+            that.refresh()
         })
 
         $("#playlist-add-new-custom-playlist").click(async () => {
             const name = await utils.prompt("请输入歌单名：")
-            utils.log(`name: ${name}`)
             if (!name) {
                 return
             }
-            this.#db.addCustomPlayList(name)
-            this.refresh()
-            this.#selectCustomPlaylistName(name)
+            that.#db.addCustomPlayList(name)
+            that.refresh()
         })
-
-        this.#initReplaceCustomPlayListDialog()
     }
 
     #addMusicListUlDragDropSupport() {
@@ -95,7 +105,6 @@ export default class PlayList {
         })
 
         this.#musicListUl.on("dragend", () => {
-            utils.log("drag end")
             const d = dest
             const s = src
             if (!d || !s) {
@@ -118,48 +127,9 @@ export default class PlayList {
         })
     }
 
-    #initReplaceCustomPlayListDialog() {
-        const dialog = $("#dialog-form-replace-custom-playlist")
-        const that = this
-
-        $("#dialog-custom-playlist-ok").click(() => {
-            const name = $("#dialog-custom-playlist-names").val()
-            if (name) {
-                that.#db.addCustomPlayList(name)
-            }
-            dialog.hide()
-        })
-
-        $("#dialog-custom-playlist-cancel").click(() => dialog.hide())
-
-        $("#playlist-replace-custom-playlist").click(() => {
-            const sel = $("#dialog-custom-playlist-names")
-            sel.empty()
-            const names = that.#db.getCustomPlayListNames()
-            if (names.length < 1) {
-                return
-            }
-            for (let name of names) {
-                const o = $("<option>")
-                o.val(name)
-                o.text(name)
-                sel.append(o)
-            }
-            dialog.show()
-        })
-    }
-
     #removeOnePlayListMusic(src) {
         this.#db.removeOnePlayListMusic(src)
         this.refresh()
-    }
-
-    #selectCustomPlaylistName(name) {
-        // pass
-        this.#customPlayListSelect.children().each((idx, el) => {
-            const option = $(el)
-            option.prop("selected", option.val() === name)
-        })
     }
 
     async #edit(idx, name) {
@@ -238,23 +208,11 @@ export default class PlayList {
         this.#pager.goto(cur, pns)
     }
 
-    #updateCustomPlayListSelector() {
-        const customPlayListNames = this.#db.getCustomPlayListNames()
-        const sel = this.#customPlayListSelect
-        sel.empty()
-        sel.append($("<option>-- 请选择歌单 --</option>"))
-        for (let cname of customPlayListNames) {
-            const option = $("<option>")
-            option.val(cname)
-            option.text(cname)
-            sel.append(option)
-        }
-    }
-
     refresh(track) {
         const src = track || this.#db.getCurTrack()
         this.#updateMusicList(src)
-        utils.showText("playlist-total", `合计：${this.list.length}`)
-        this.#updateCustomPlayListSelector()
+        utils.showText("playlist-total", `歌曲：${this.list.length}`)
+        const n = this.#db.getCustomPlayListNames().length || 0
+        utils.showText("custom-playlist-total", `歌单：${n}`)
     }
 }

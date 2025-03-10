@@ -25,11 +25,11 @@ export default class DirList {
             that.refresh()
         })
 
-        $("#dirlist-gen-playlist").click(() => {
-            that.#db.replacePlayListBySelectedCats()
-            that.refresh()
+        $("#dirlist-add-to-playlist").click(() => {
+            const list = that.#db.genPlayListBySelectedCats()
+            const n = that.#db.addToPlayList(list)
             that.#playList.refresh()
-            that.#pages.show("playlist")
+            utils.alert(`添加了 ${n} 首歌曲`)
         })
     }
 
@@ -74,6 +74,6 @@ export default class DirList {
     #reportTotal() {
         const selected = this.#db.genPlayListBySelectedCats().length
         const all = this.#db.getAllMusic().length
-        utils.showText("dirlist-total", `选中：${selected} 共：${all}`)
+        utils.showText("dirlist-total", `( ${selected} / ${all} )`)
     }
 }

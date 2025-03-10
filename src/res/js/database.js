@@ -111,9 +111,15 @@ export default class Database {
         }
     }
 
-    replacePlayListBySelectedCats() {
-        this.#data.list = this.genPlayListBySelectedCats()
+    addToPlayList(content) {
+        if (!content || !content.length || content.length < 1) {
+            return 0
+        }
+        const list = this.#data.list
+        const slim = content.filter((s) => list.indexOf(s) < 0)
+        this.#data.list = [...list, ...slim]
         this.#save()
+        return slim.length
     }
 
     genPlayListBySelectedCats() {
@@ -173,22 +179,18 @@ export default class Database {
     movePlayListMusic(fromIndex, toIndex) {
         const arr = this.#data.list
         if (
+            !arr ||
+            !arr.length ||
+            arr.length < 2 ||
             fromIndex === toIndex ||
             fromIndex < 0 ||
             toIndex < 0 ||
-            fromIndex >= arr.length ||
-            toIndex >= arr.length
+            fromIndex >= arr.length
         ) {
             return
         }
-        utils.move(arr, fromIndex, toIndex)
-        this.#save()
-    }
-
-    addOnePlayListMusic(src) {
-        if (this.#data.list.indexOf(src) < 0) {
-            this.#data.list.push(src)
-        }
+        const dest = Math.min(arr.length - 1, toIndex)
+        utils.move(arr, fromIndex, dest)
         this.#save()
     }
 
