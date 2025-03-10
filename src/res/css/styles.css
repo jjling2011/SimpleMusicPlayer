@@ -42,7 +42,8 @@ footer a {
     text-decoration-line: none;
 }
 
-#dialog-form-replace-custom-playlist,
+#dialog-select,
+#dialog-loading,
 #dialog-alert,
 #dialog-confirm,
 #dialog-prompt {
@@ -56,14 +57,41 @@ footer a {
     display: none;
 }
 
-#dialog-win-replace-custom-playlist div,
+#dialog-loading-window,
+#dialog-select-window,
+#dialog-alert-window,
+#dialog-confirm-window,
+#dialog-prompt-window {
+    padding: 0.5rem;
+    background-color: white;
+    margin: auto auto;
+    position: relative;
+    top: 30%;
+    width: 80%;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+#dialog-loading pre,
+#dialog-alert-window pre,
+#dialog-confirm-window pre,
+#dialog-prompt-window pre {
+    word-break: break-all;
+    font-size: 1rem;
+    white-space: pre-wrap;
+}
+
+#dialog-loading div,
+#dialog-select div,
+#dialog-loding div,
 #dialog-alert-window div,
 #dialog-confirm-window div,
 #dialog-prompt-window div {
     justify-content: center;
 }
 
-#dialog-win-replace-custom-playlist button,
+#dialog-select-window button,
 #dialog-alert-window button,
 #dialog-confirm-window button,
 #dialog-prompt-window button {
@@ -82,35 +110,13 @@ footer a {
     flex-grow: 1;
 }
 
-#dialog-win-replace-custom-playlist select {
+#dialog-select-window select {
     height: 1.5rem;
     flex-grow: 1;
 }
 
-#dialog-alert-window pre,
-#dialog-confirm-window pre,
-#dialog-prompt-window pre {
-    word-break: break-all;
-    font-size: 1rem;
-    white-space: pre-wrap;
-}
-
-#dialog-win-replace-custom-playlist,
-#dialog-alert-window,
-#dialog-confirm-window,
-#dialog-prompt-window {
-    padding: 0.5rem;
-    background-color: white;
-    z-index: 110;
-    position: relative;
-    margin: auto;
-    top: 30%;
-    width: 80%;
-    border-radius: 0.5rem;
-    max-height: 10rem;
-    max-width: 20rem;
-    display: flex;
-    flex-direction: column;
+#dialog-loading img {
+    max-width: 30%;
 }
 
 .box {
@@ -134,12 +140,6 @@ input {
 button,
 input[type="button"] {
     cursor: pointer;
-}
-
-#utils-status {
-    flex-grow: 1;
-    font-size: 1rem;
-    text-align: right;
 }
 
 #audio-title {

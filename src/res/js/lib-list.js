@@ -38,7 +38,6 @@ export default class LibList {
         ) {
             utils.log(`perform update`)
             await this.#db.updateMusicDbAsync()
-            utils.alert(`更新完成`)
             this.clearSearchKeyword()
             this.#dirList.refresh()
         } else {

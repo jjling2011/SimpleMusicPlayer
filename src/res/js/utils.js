@@ -22,6 +22,14 @@ export default class Utils {
         arr.splice(toIndex, 0, element)
     }
 
+    // https://github.com/n3r4zzurr0/svg-spinners/blob/main/svg-css/3-dots-bounce.svg
+    loading(title, donePromise) {
+        $("#dialog-loading-content").text(title)
+        const loading = $("#dialog-loading")
+        loading.show()
+        donePromise.finally(() => loading.hide())
+    }
+
     async prompt(title, content) {
         const dialog = $("#dialog-prompt")
         const p = new Promise((resolve, reject) => {
@@ -71,10 +79,6 @@ export default class Utils {
 
     compareString(a, b) {
         return a < b ? -1 : a > b ? 1 : 0
-    }
-
-    showStatus(...args) {
-        this.#status.text(args.join(" "))
     }
 
     showText(id, content) {

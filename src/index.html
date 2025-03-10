@@ -4,15 +4,15 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>简单音乐播放器</title>
-        <link rel="stylesheet" href="./js/fa/solid.min.css" />
-        <link rel="stylesheet" href="./js/fa/fontawesome.min.css" />
+        <link rel="stylesheet" href="./res/css/solid.min.css" />
+        <link rel="stylesheet" href="./res/css/fontawesome.min.css" />
         <link
             rel="icon"
             href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2020%2020'%3E%3Ctext%20x='-2'%20y='15.5'%3E🎵%3C/text%3E%3C/svg%3E"
             type="image/svg+xml"
         />
-        <link rel="stylesheet" href="./js/styles.css" />
-        <script src="./js/jquery-3.7.1.min.js"></script>
+        <link rel="stylesheet" href="./res/css/styles.css" />
+        <script src="./res/js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
         <h3 id="audio-title" class="box">简单音乐播放器</h3>
@@ -78,16 +78,11 @@
                 <button id="playlist-shuffle-btn">随机</button>
                 <button id="playlist-reverse-btn">逆序</button>
                 <button id="playlist-clear-btn">清空</button>
-                <span id="playlist-total"></span>
-            </div>
-            <div class="box">
-                <select
-                    name="custom-playlist-names"
-                    id="playlist-custom-playlist"
-                ></select>
                 <button id="playlist-add-new-custom-playlist">新建</button>
+                <button id="playlist-load-custom-playlist">加载</button>
                 <button id="playlist-replace-custom-playlist">替换</button>
                 <button id="playlist-remove-custom-playlist">删除</button>
+                <span id="playlist-total"></span>
             </div>
             <div class="box wrap">
                 <ul id="playlist-music-list"></ul>
@@ -157,24 +152,35 @@
             </div>
         </div>
     </div>
-    <div id="dialog-form-replace-custom-playlist">
-        <div id="dialog-win-replace-custom-playlist">
-            <span class="box">选择要替换的歌单</span>
-            <select id="dialog-custom-playlist-names" class="box"></select>
+    <div id="dialog-loading">
+        <div id="dialog-loading-window">
+            <pre class="box" id="dialog-loading-content"></pre>
             <div class="box">
-                <button id="dialog-custom-playlist-ok">确定</button>
-                <button id="dialog-custom-playlist-cancel">取消</button>
+                <img
+                    src="./res/img/3-dots-bounce.svg"
+                    alt="3-dots-bounce.svg"
+                />
+            </div>
+        </div>
+    </div>
+    <div id="dialog-select">
+        <div id="dialog-select-window">
+            <pre class="box" id="dialog-select-title"></pre>
+            <select class="box" id="dialog-select-content"></select>
+            <div class="box">
+                <button id="dialog-select-ok">确定</button>
+                <button id="dialog-select-cancel">取消</button>
             </div>
         </div>
     </div>
     <script type="module">
-        import Utils from "./js/utils.js"
-        import Player from "./js/player.js"
-        import Database from "./js/database.js"
-        import LibList from "./js/lib-list.js"
-        import Pages from "./js/pages.js"
-        import PlayList from "./js/play-list.js"
-        import DirList from "./js/dir-list.js"
+        import Utils from "./res/js/utils.js"
+        import Player from "./res/js/player.js"
+        import Database from "./res/js/database.js"
+        import LibList from "./res/js/lib-list.js"
+        import Pages from "./res/js/pages.js"
+        import PlayList from "./res/js/play-list.js"
+        import DirList from "./res/js/dir-list.js"
 
         window.utils = new Utils()
         const pages = new Pages()

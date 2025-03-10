@@ -37,15 +37,24 @@ export default class Database {
         this.#save()
     }
 
-    async updateMusicDbAsync() {
-        utils.showStatus("更新数据库。。。")
-        const s = await utils.post("serv.php")
-        this.#data.all = JSON.parse(s || "[]")
-        this.#data.update = new Date().toLocaleString()
-        this.#updateCats()
-        this.#updatePlayList()
-        this.#save()
-        utils.showStatus("")
+    updateMusicDbAsync() {
+        const that = this
+        const done = new Promise((resolve) => {
+            utils
+                .post("serv.php")
+                .catch((err) => utils.alert(`更新数据库错误: ${err.message}`))
+                .then((s) => {
+                    that.#data.all = JSON.parse(s || "[]")
+                    that.#data.update = new Date().toLocaleString()
+                    that.#updateCats()
+                    that.#updatePlayList()
+                    that.#save()
+                    utils.alert("更新完成")
+                })
+                .finally(() => resolve())
+        })
+        utils.loading("更新数据库中...", done)
+        return done
     }
 
     #updateCats() {
