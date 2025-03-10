@@ -42,7 +42,10 @@ footer a {
     text-decoration-line: none;
 }
 
-#dialog-form-replace-custom-playlist {
+#dialog-form-replace-custom-playlist,
+#dialog-alert,
+#dialog-confirm,
+#dialog-prompt {
     z-index: 100;
     position: absolute;
     left: 0;
@@ -53,18 +56,46 @@ footer a {
     display: none;
 }
 
-#dialog-win-replace-custom-playlist .box {
+#dialog-win-replace-custom-playlist div,
+#dialog-alert-window div,
+#dialog-confirm-window div,
+#dialog-prompt-window div {
     justify-content: center;
 }
 
-#dialog-win-replace-custom-playlist button {
-    margin: 0.25rem;
+#dialog-win-replace-custom-playlist button,
+#dialog-alert-window button,
+#dialog-confirm-window button,
+#dialog-prompt-window button {
+    height: 1.7rem;
+    min-width: 3rem;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
+    border: solid 0.01rem lightgray;
+    margin: 0.125rem 0.25rem;
+    background-color: rgba(0, 0, 0, 0);
 }
+
+#dialog-prompt-window input {
+    height: 1.5rem;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
 #dialog-win-replace-custom-playlist select {
     height: 1.5rem;
 }
 
-#dialog-win-replace-custom-playlist {
+#dialog-confirm-window pre,
+#dialog-prompt-window pre {
+    font-size: 1rem;
+}
+
+#dialog-win-replace-custom-playlist,
+#dialog-alert-window,
+#dialog-confirm-window,
+#dialog-prompt-window {
+    padding: 0.5rem;
     background-color: white;
     z-index: 110;
     position: relative;
@@ -189,18 +220,6 @@ input[type="button"] {
     line-height: 1.5rem;
 }
 
-#dirlist-dirs li span:first-child {
-    flex-grow: 1;
-    text-align: left;
-    word-break: break-word;
-}
-
-#dirlist-dirs li span {
-    font-size: 1rem;
-    margin: 0.125rem 0.25rem;
-    word-break: keep-all;
-}
-
 #search-bar button {
     margin: 0 0.5rem;
     padding: 0;
@@ -252,6 +271,26 @@ input[type="button"] {
     border: solid 0.01rem lightgray;
     margin: 0.125rem 0.25rem;
     background-color: rgba(0, 0, 0, 0);
+}
+
+.pages-div li span {
+    font-size: 1rem;
+    margin: 0.125rem 0.25rem;
+    word-break: keep-all;
+}
+
+.pages-div li span:first-of-type {
+    flex-grow: 1;
+    text-align: left;
+    word-break: break-word;
+}
+
+.pages-div li button {
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1rem;
+    padding: 0;
+    margin: 0 0.25rem;
 }
 
 .pages-header button.active,
@@ -317,10 +356,6 @@ input[type="button"] {
     padding: 0;
 }
 
-li span:first-of-type {
-    flex-grow: 1;
-}
-
 #lib-music-list li,
 #playlist-music-list li,
 #dirlist-dirs li {
@@ -333,11 +368,6 @@ li span:first-of-type {
     padding: 0.125rem 0.5rem;
     display: flex;
     align-items: center;
-}
-
-#lib-music-list li:hover,
-#playlist-music-list li:hover {
-    background-color: lightgray;
 }
 
 .lib-pager-container {

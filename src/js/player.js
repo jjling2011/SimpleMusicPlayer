@@ -178,7 +178,7 @@ export default class Player {
     #loadTrack(src) {
         if (!src) {
             const msg = "错误：路径为空！"
-            alert(msg)
+            utils.alert(msg)
             throw new Error(msg)
         }
         utils.log(`加载：${src}`)

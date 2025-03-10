@@ -26,24 +26,23 @@ export default class LibList {
         $(`#lib-update-db`).click(() => that.#confirmUpdateMusicDb())
 
         this.#musicList = $(`#lib-music-list`)
-        this.#musicList.click((e) => {
-            if (e.target.tagName === "LI") {
-                const src = e.target.getAttribute("data-src")
-                that.#player.play(src)
-            }
-        })
-
         this.#pager = new Pager("lib-pager-container", 5)
         this.#pager.onClick = (n) => that.#updateMusicList(n)
     }
 
     async #confirmUpdateMusicDb() {
         const last = this.#db.getLastUpdateDate()
-        if (!last || confirm(`上次更新：${last}\n确定要更新数据库吗？`)) {
+        if (
+            !last ||
+            (await utils.confirm(`上次更新：${last}\n确定要更新数据库吗？`))
+        ) {
+            utils.log(`perform update`)
             await this.#db.updateMusicDbAsync()
-            setTimeout(() => alert(`更新完成`), 1)
+            utils.alert(`更新完成`)
             this.clearSearchKeyword()
             this.#dirList.refresh()
+        } else {
+            utils.log(`cancel`)
         }
     }
 
@@ -111,16 +110,28 @@ export default class LibList {
         for (let i = start; i < end; i++) {
             const url = this.#searchResult[i]
             const name = utils.getMusicName(url)
+
             const li = $("<li>")
             li.attr("title", url)
-            li.attr("data-src", url)
+
             const span = $("<span>")
-            span.attr("data-src", url)
             span.text(`${i + 1}. ${name}`)
-            const btn = $('<button><i class="fa-solid fa-plus"></i></button>')
-            btn.click(() => that.#addOnePlayListMusic(url))
+            span.click(() => that.#player.play(url))
             li.append(span)
-            li.append(btn)
+
+            const btnPlay = $(
+                '<button><i class="fa-solid fa-play"></i></button>',
+            )
+            btnPlay.click(() => that.#player.play(url))
+            li.append(btnPlay)
+
+            const btnAdd = $(
+                '<button><i class="fa-solid fa-plus"></i></button>',
+            )
+            btnAdd.attr("title", "添加到列表")
+            btnAdd.click(() => that.#addOnePlayListMusic(url))
+            li.append(btnAdd)
+
             this.#musicList.append(li)
         }
     }

@@ -19,14 +19,6 @@ export default class PlayList {
         this.#pager = new Pager("playlist-pager-container", 5)
         this.#pager.onClick = (n) => that.#genMusicList(n)
         this.#musicDiv = $("#playlist-music-list")
-        this.#musicDiv.click((e) => {
-            const tag = e.target.tagName
-            if (tag === "LI" || tag === "SPAN") {
-                const src = e.target.getAttribute("data-src")
-                that.#player.play(src)
-            }
-        })
-
         this.#customPlayListSelect = $("#playlist-custom-playlist")
 
         $("#playlist-sort-btn").click(() => {
@@ -57,13 +49,13 @@ export default class PlayList {
                 this.refresh()
                 this.#selectCustomPlaylistName(name)
             } else {
-                alert(`加载失败`)
+                utils.alert(`加载失败`)
             }
         })
 
-        $("#playlist-remove-custom-playlist").click(() => {
+        $("#playlist-remove-custom-playlist").click(async () => {
             const name = this.#customPlayListSelect.val()
-            if (!confirm(`删除 [${name}] ？`)) {
+            if (!(await utils.confirm(`删除 [${name}] ？`))) {
                 return
             }
             this.#db.removeCustomPlayList(name)
@@ -71,8 +63,9 @@ export default class PlayList {
             this.#selectCustomPlaylistName()
         })
 
-        $("#playlist-add-new-custom-playlist").click(() => {
-            const name = prompt("请输入歌单名：")
+        $("#playlist-add-new-custom-playlist").click(async () => {
+            const name = await utils.prompt("请输入歌单名：")
+            utils.log(`name: ${name}`)
             if (!name) {
                 return
             }
@@ -128,6 +121,19 @@ export default class PlayList {
         })
     }
 
+    async #edit(idx, name) {
+        const r = await utils.prompt(`请输入 [${name}] 的新序号：`, idx + 1)
+        if (r === null) {
+            return
+        }
+        const n = parseInt(r)
+        if (n === NaN) {
+            return
+        }
+        this.#db.movePlayListMusic(idx, Math.floor(n) - 1)
+        this.refresh()
+    }
+
     #genMusicList(cur) {
         const that = this
         const list = this.list
@@ -145,14 +151,30 @@ export default class PlayList {
             const name = utils.getMusicName(url)
             const li = $("<li>")
             li.attr("title", url)
-            li.attr("data-src", url)
+
             const span = $("<span>")
-            span.attr("data-src", url)
             span.text(`${i + 1}. ${name}`)
-            const btn = $('<button><i class="fa-solid fa-xmark"></i></button>')
-            btn.click(() => that.#removeOnePlayListMusic(url))
+            span.click(() => that.#player.play(url))
             li.append(span)
-            li.append(btn)
+
+            const btnPlay = $(
+                '<button><i class="fa-solid fa-play"></i></button>',
+            )
+            btnPlay.click(() => that.#player.play(url))
+            li.append(btnPlay)
+
+            const btnEdit = $(
+                '<button><i class="fa-solid fa-pen"></i></button>',
+            )
+            btnEdit.click(() => that.#edit(i, name))
+            li.append(btnEdit)
+
+            const btnRemove = $(
+                '<button><i class="fa-solid fa-xmark"></i></button>',
+            )
+            btnRemove.click(() => that.#removeOnePlayListMusic(url))
+            li.append(btnRemove)
+
             if (track === url) {
                 li.addClass("active")
             }

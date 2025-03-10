@@ -161,6 +161,21 @@ export default class Database {
         return this.#data.update
     }
 
+    movePlayListMusic(fromIndex, toIndex) {
+        const arr = this.#data.list
+        if (
+            fromIndex === toIndex ||
+            fromIndex < 0 ||
+            toIndex < 0 ||
+            fromIndex >= arr.length ||
+            toIndex >= arr.length
+        ) {
+            return
+        }
+        utils.move(arr, fromIndex, toIndex)
+        this.#save()
+    }
+
     addOnePlayListMusic(src) {
         if (this.#data.list.indexOf(src) < 0) {
             this.#data.list.push(src)

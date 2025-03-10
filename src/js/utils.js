@@ -1,8 +1,68 @@
 export default class Utils {
     #status
 
+    #confirmResolve
+    #confirmReject
+    #promptResolve
+    #promptReject
+
     constructor() {
         this.#status = $("#utils-status")
+        $("#dialog-alert-ok").click(() => $("#dialog-alert").hide())
+        $("#dialog-confirm-ok").click(() => this.#confirmResolve?.())
+        $("#dialog-confirm-cancel").click(() => this.#confirmReject?.())
+        $("#dialog-prompt-ok").click(() => this.#promptResolve?.())
+        $("#dialog-prompt-cancel").click(() => this.#promptReject?.())
+    }
+
+    // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
+    move(arr, fromIndex, toIndex) {
+        const element = arr[fromIndex]
+        arr.splice(fromIndex, 1)
+        arr.splice(toIndex, 0, element)
+    }
+
+    async prompt(title, content) {
+        const dialog = $("#dialog-prompt")
+        const p = new Promise((resolve, reject) => {
+            this.#promptResolve = resolve
+            this.#promptReject = reject
+        })
+        $("#dialog-prompt-title").text(title)
+        $("#dialog-prompt-content").val(content)
+        dialog.show()
+        try {
+            await p
+            const s = $("#dialog-prompt-content").val()
+            return s
+        } catch {
+        } finally {
+            dialog.hide()
+        }
+        return null
+    }
+
+    async confirm(content) {
+        const dialog = $("#dialog-confirm")
+        const p = new Promise((resolve, reject) => {
+            this.#confirmResolve = resolve
+            this.#confirmReject = reject
+        })
+        $("#dialog-confirm-content").text(content)
+        dialog.show()
+        try {
+            await p
+            return true
+        } catch {
+        } finally {
+            dialog.hide()
+        }
+        return false
+    }
+
+    alert(content) {
+        $("#dialog-alert-content").text(content)
+        $("#dialog-alert").show()
     }
 
     log(...args) {
