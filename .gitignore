@@ -1,2 +1,9 @@
 dev/
 src/music/
+dist/
+public/music/
+
+vite.dev.config.js
+
+node_modules/
+package-lock.json

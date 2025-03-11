@@ -20,7 +20,6 @@ export default class DirList {
     refresh() {
         const curDir = this.#db.getCurDir()
         const dirInfo = this.#db.getAllDirs()
-        console.log("refresh: dir:", curDir, "info:", dirInfo)
         this.#genNavBar(curDir)
         this.#genDirs(curDir, dirInfo)
     }
@@ -55,8 +54,6 @@ export default class DirList {
     }
 
     #getSubDirs(dir, dirs) {
-        console.log(`getSubDirs: dir: ${dir}`, `dirs:`, dirs)
-
         const depth = dir.split("/").length + 1
         const r = dirs
             .filter((d) => d.startsWith(dir) && d !== dir)
@@ -67,7 +64,6 @@ export default class DirList {
     }
 
     #genDirs(curDir, dirInfo) {
-        console.log(`gendirs: dir: ${curDir}`, `info:`, dirInfo)
         const that = this
         const ul = this.#dirsUl
         const dirs = Object.keys(dirInfo)

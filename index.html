@@ -4,15 +4,11 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>简单音乐播放器</title>
-        <link rel="stylesheet" href="./res/css/solid.min.css" />
-        <link rel="stylesheet" href="./res/css/fontawesome.min.css" />
         <link
             rel="icon"
             href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2020%2020'%3E%3Ctext%20x='-2'%20y='15.5'%3E🎵%3C/text%3E%3C/svg%3E"
             type="image/svg+xml"
         />
-        <link rel="stylesheet" href="./res/css/styles.css" />
-        <script src="./res/js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
         <h3 id="audio-title" class="box">简单音乐播放器</h3>
@@ -207,31 +203,5 @@
             </div>
         </div>
     </div>
-    <script type="module">
-        import Utils from "./res/js/utils.js"
-        import Player from "./res/js/player.js"
-        import Database from "./res/js/database.js"
-        import LibList from "./res/js/lib-list.js"
-        import Pages from "./res/js/pages.js"
-        import PlayList from "./res/js/play-list.js"
-        import DirList from "./res/js/dir-list.js"
-
-        window.utils = new Utils()
-        const pages = new Pages()
-        pages.init()
-
-        const db = new Database()
-        const player = new Player(db)
-        const playList = new PlayList(db, player)
-        const dirList = new DirList(db, playList)
-        const libList = new LibList(db, player, playList, dirList)
-
-        if (db.getAllMusic().length < 1) {
-            await db.updateMusicDbAsync()
-            $("#pages-btn-lib").trigger("click")
-        }
-        libList.clearSearchKeyword()
-        playList.refresh()
-        dirList.refresh()
-    </script>
+    <script type="module" src="./src/main.js"></script>
 </html>

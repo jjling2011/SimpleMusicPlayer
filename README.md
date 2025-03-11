@@ -2,10 +2,16 @@
 这是一个播放服务器里面的音乐的网页应用。是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。功能比较简陋，也不打算添加复杂的功能。
 
 ### 安装
- * 克隆这个项目，或者下载项目的源码 zip 包
- * 把 src 目录里面的所有文件放到支持 php 的 web 目录
- * 随便复制几个 mp3 文件到那个目录里面
+```bash
+# 安装 vite 等依赖
+npm install
 
+# 打包
+npm run build
+```
+
+把 dist 里面的所有文件复制到支持 php 的 web 目录。  
+随便复制几个 mp3 文件到那个目录里面。  
 访问 serv.php 会看到一个列出所有音乐文件路径的 JSON 页面。  
 访问 index.html 会看到播放器页面。  
 

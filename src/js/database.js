@@ -53,7 +53,7 @@ export default class Database {
                 })
                 .finally(() => resolve())
         })
-        utils.loading("更新数据库中...", done)
+        utils.loading("更新数据库中", done)
         return done
     }
 

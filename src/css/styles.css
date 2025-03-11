@@ -100,7 +100,7 @@ footer a {
     min-width: 3rem;
     font-size: 0.8rem;
     border-radius: 0.5rem;
-    border: solid 0.01rem lightgray;
+    border: solid 1px lightgray;
     margin: 0.125rem 0.25rem;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -148,7 +148,7 @@ input[type="button"] {
 }
 
 .audio-wrapper {
-    border: solid 0.02rem silver;
+    border: solid 1px silver;
     background-color: whitesmoke;
     height: 3rem;
     border-radius: 2rem;
@@ -233,7 +233,7 @@ input[type="button"] {
 }
 
 #search-bar input[type="text"] {
-    border: 0.02rem solid darkgray;
+    border: 1px solid darkgray;
     border-radius: 0.5rem;
     height: 1.5rem;
 }
@@ -251,7 +251,7 @@ input[type="button"] {
     width: 4rem;
     background-color: rgba(0, 0, 0, 0);
     border-radius: 0.25rem 0.25rem 0 0;
-    border: 0.02rem solid gainsboro;
+    border: 1px solid gainsboro;
     border-bottom: none;
     font-size: 1rem;
 }
@@ -262,7 +262,7 @@ input[type="button"] {
     flex-direction: column;
     min-height: 28rem;
     border-radius: 0.25rem;
-    border: solid 0.02rem lightgray;
+    border: solid 1px lightgray;
     display: none;
 }
 
@@ -273,7 +273,7 @@ input[type="button"] {
 .pages-div button {
     height: 1.5rem;
     border-radius: 0.5rem;
-    border: solid 0.01rem lightgray;
+    border: solid 1px lightgray;
     margin: 0.125rem 0.25rem;
     flex-shrink: 0;
     background-color: rgba(0, 0, 0, 0);
@@ -350,8 +350,8 @@ input[type="button"] {
 #lib-music-list li,
 #playlist-music-list li,
 #dirlist-dirs li {
-    border: gray solid 0.065rem;
-    border-radius: 0.25rem;
+    border: gray solid 1px;
+    border-radius: 4px;
     cursor: pointer;
     margin: 0rem 0rem 0.25rem 0rem;
     word-break: break-word;
