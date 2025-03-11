@@ -212,8 +212,8 @@ export default class PlayList {
         const src = track || this.#db.getCurTrack()
         this.#updateMusicList(src)
         const total = this.list.length
-        utils.showText("playlist-total", `歌曲：${total}`)
-        utils.showText("dirlist-total", `歌曲：${total}`)
+        utils.showText("playlist-total", `音乐：${total}`)
+        utils.showText("dirlist-total", `音乐：${total}`)
         const n = this.#db.getCustomPlayListNames().length || 0
         utils.showText("custom-playlist-total", `歌单：${n}`)
     }

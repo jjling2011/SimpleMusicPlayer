@@ -1,12 +1,16 @@
 export default class DirList {
     #db
+    #player
+    #pages
     #playList
     #navBar
     #dirsUl
 
-    constructor(db, playList) {
+    constructor(db, playList, player, pages) {
         const that = this
         this.#db = db
+        this.#player = player
+        this.#pages = pages
         this.#playList = playList
         this.#navBar = $("#dirlist-nav-bar")
         this.#dirsUl = $("#dirlist-dirs")
@@ -89,7 +93,7 @@ export default class DirList {
 
             const spanTitle = $("<span>")
             spanTitle.text(`${subDir}`)
-            spanTitle.attr(`title`, `歌曲：${mc} 子目录: ${s2c}`)
+            spanTitle.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
             if (s2c) {
                 spanTitle.click(() => cd())
             } else {
@@ -103,15 +107,33 @@ export default class DirList {
                 const m = all.filter((s) => s.startsWith(fullDir))
                 const n = that.#db.addToPlayList(m)
                 that.#playList.refresh()
-                utils.alert(`添加了 ${n} 首歌曲`)
+                utils.alert(`添加了 ${n} 首音乐`)
             }
 
             const spanCount = $("<span>")
             spanCount.text(`(${mc}/${s2c})`)
-            spanCount.attr(`title`, `歌曲：${mc} 子目录: ${s2c}`)
+            spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
 
             spanCount.click(() => add())
             li.append(spanCount)
+
+            const btnPlay = $(
+                '<button><i class="fa-solid fa-play"></i></button>',
+            )
+            btnPlay.click(() => {
+                const all = that.#db.getAllMusic()
+                const m = all.filter((s) => s.startsWith(fullDir))
+                if (m.length < 1) {
+                    utils.alert("目录内没有音乐")
+                    return
+                }
+                that.#db.clearPlayList()
+                that.#db.addToPlayList(m)
+                that.#playList.refresh()
+                that.#player.nextTrack()
+                that.#pages.show("playlist")
+            })
+            li.append(btnPlay)
 
             const btnAdd = $(
                 '<button title="添加到列表"><i class="fa-solid fa-plus"></i></button>',

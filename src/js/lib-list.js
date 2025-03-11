@@ -33,13 +33,13 @@ export default class LibList {
         $(`#lib-add-cur-page-to-playlist`).click(() => {
             const n = that.#db.addToPlayList(that.#curResult)
             that.#playList.refresh()
-            utils.alert(`添加了 ${n} 首歌曲`)
+            utils.alert(`添加了 ${n} 首音乐`)
         })
 
         $(`#lib-add-result-to-playlist`).click(() => {
             const n = that.#db.addToPlayList(that.#searchResult)
             that.#playList.refresh()
-            utils.alert(`添加了 ${n} 首歌曲`)
+            utils.alert(`添加了 ${n} 首音乐`)
         })
     }
 

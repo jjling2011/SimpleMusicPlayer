@@ -16,7 +16,6 @@ export default defineConfig({
     },
     build: {
         emptyOutDir: true,
-        manifest: true,
         rollupOptions: {
             output: {
                 assetFileNames: "res/css/[name][hash][extname]",
