@@ -1,3 +1,5 @@
+import utils from "./utils.js"
+
 const DATA_KEY = "data-key"
 
 export default class Database {

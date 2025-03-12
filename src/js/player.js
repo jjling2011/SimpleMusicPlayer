@@ -1,3 +1,6 @@
+import $ from "jquery"
+import utils from "./utils.js"
+
 export default class Player {
     #db
 

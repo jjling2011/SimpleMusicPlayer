@@ -1,4 +1,6 @@
-export default class Utils {
+import $ from "jquery"
+
+class Utils {
     #confirmResolve
     #confirmReject
     #promptResolve
@@ -192,3 +194,7 @@ export default class Utils {
         }
     }
 }
+
+const utils = new Utils()
+
+export default utils

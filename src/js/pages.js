@@ -1,3 +1,4 @@
+import $ from "jquery"
 const TAGS = ["lib", "playlist", "dirlist", "about"]
 
 export default class Pages {
@@ -42,10 +43,9 @@ export default class Pages {
     }
 
     slideTo(isLeft) {
-        const d = isLeft ? -1 : +1
+        const d = isLeft ? +1 : -1
         const idx = (TAGS.indexOf(this.#curTag) + d + TAGS.length) % TAGS.length
         const tag = TAGS[idx]
-        // utils.log(`从 ${this.#curTag} 切换到：${tag}`)
         this.show(tag)
     }
 

@@ -1,5 +1,4 @@
 import { defineConfig } from "vite"
-import inject from "@rollup/plugin-inject"
 import legacy from "@vitejs/plugin-legacy"
 
 export default defineConfig({
@@ -7,13 +6,7 @@ export default defineConfig({
         legacy({
             targets: ["chrome >= 64", "safari >= 12"],
         }),
-        inject({
-            jQuery: "jquery",
-        }),
     ],
-    optimizeDeps: {
-        include: ["jquery"],
-    },
     build: {
         emptyOutDir: true,
         rollupOptions: {

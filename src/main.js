@@ -1,10 +1,7 @@
-import jQuery from "jquery"
-
 import "./css/solid.min.css"
 import "./css/fontawesome.min.css"
 import "./css/styles.css"
 
-import Utils from "./js/utils.js"
 import Player from "./js/player.js"
 import Database from "./js/database.js"
 import LibList from "./js/lib-list.js"
@@ -12,9 +9,6 @@ import Pages from "./js/pages.js"
 import PlayList from "./js/play-list.js"
 import DirList from "./js/dir-list.js"
 
-Object.assign(window, { $: jQuery, jQuery })
-
-window.utils = new Utils()
 const pages = new Pages()
 pages.init()
 

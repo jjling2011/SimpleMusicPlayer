@@ -1,3 +1,5 @@
+import $ from "jquery"
+import utils from "./utils.js"
 import Pager from "./pager.js"
 
 export default class PlayList {
@@ -33,7 +35,7 @@ export default class PlayList {
             that.#db.reversePlayList()
             that.refresh()
         })
-        $("#playlist-clear-btn").on("click",() => {
+        $("#playlist-clear-btn").on("click", () => {
             that.#db.clearPlayList()
             that.refresh()
         })
@@ -48,7 +50,7 @@ export default class PlayList {
             return name
         }
 
-        $("#playlist-load-custom-playlist").on("click",async () => {
+        $("#playlist-load-custom-playlist").on("click", async () => {
             const name = await selectCustomPlayListName("加载")
             if (!name) {
                 return
@@ -61,7 +63,7 @@ export default class PlayList {
             }
         })
 
-        $("#playlist-replace-custom-playlist").on("click",async () => {
+        $("#playlist-replace-custom-playlist").on("click", async () => {
             const name = await selectCustomPlayListName("替换")
             if (!name) {
                 return
@@ -70,7 +72,7 @@ export default class PlayList {
             that.refresh()
         })
 
-        $("#playlist-remove-custom-playlist").on("click",async () => {
+        $("#playlist-remove-custom-playlist").on("click", async () => {
             const name = await selectCustomPlayListName("删除")
             if (!name) {
                 return
@@ -79,7 +81,7 @@ export default class PlayList {
             that.refresh()
         })
 
-        $("#playlist-add-new-custom-playlist").on("click",async () => {
+        $("#playlist-add-new-custom-playlist").on("click", async () => {
             const name = await utils.prompt("请输入歌单名：")
             if (!name) {
                 return
@@ -169,25 +171,25 @@ export default class PlayList {
             span.text(`${i + 1}. ${name}`)
             span.attr("data-index", i)
             span.attr("draggable", "true")
-            span.on("click",() => that.#player.play(url))
+            span.on("click", () => that.#player.play(url))
             li.append(span)
 
             const btnPlay = $(
                 '<button><i class="fa-solid fa-play"></i></button>',
             )
-            btnPlay.on("click",() => that.#player.play(url))
+            btnPlay.on("click", () => that.#player.play(url))
             li.append(btnPlay)
 
             const btnEdit = $(
                 '<button><i class="fa-solid fa-pen"></i></button>',
             )
-            btnEdit.on("click",() => that.#edit(i, name))
+            btnEdit.on("click", () => that.#edit(i, name))
             li.append(btnEdit)
 
             const btnRemove = $(
                 '<button><i class="fa-solid fa-xmark"></i></button>',
             )
-            btnRemove.on("click",() => that.#removeOnePlayListMusic(url))
+            btnRemove.on("click", () => that.#removeOnePlayListMusic(url))
             li.append(btnRemove)
 
             if (track === url) {
