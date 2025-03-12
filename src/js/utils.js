@@ -7,13 +7,13 @@ export default class Utils {
     #selectReject
 
     constructor() {
-        $("#dialog-alert-ok").click(() => $("#dialog-alert").hide())
-        $("#dialog-confirm-ok").click(() => this.#confirmResolve?.())
-        $("#dialog-confirm-cancel").click(() => this.#confirmReject?.())
-        $("#dialog-prompt-ok").click(() => this.#promptResolve?.())
-        $("#dialog-prompt-cancel").click(() => this.#promptReject?.())
-        $("#dialog-select-ok").click(() => this.#selectResolve?.())
-        $("#dialog-select-cancel").click(() => this.#selectReject?.())
+        $("#dialog-alert-ok").on("click", () => $("#dialog-alert").hide())
+        $("#dialog-confirm-ok").on("click", () => this.#confirmResolve?.())
+        $("#dialog-confirm-cancel").on("click", () => this.#confirmReject?.())
+        $("#dialog-prompt-ok").on("click", () => this.#promptResolve?.())
+        $("#dialog-prompt-cancel").on("click", () => this.#promptReject?.())
+        $("#dialog-select-ok").on("click", () => this.#selectResolve?.())
+        $("#dialog-select-cancel").on("click", () => this.#selectReject?.())
     }
 
     // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another

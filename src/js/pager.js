@@ -25,7 +25,7 @@ export default class Pager {
         const that = this
         const btn = $("<button>")
         btn.text(tag)
-        btn.click(() => that.goto(idx, last))
+        btn.on("click", () => that.goto(idx, last))
         return btn
     }
 
@@ -67,7 +67,7 @@ export default class Pager {
 
         const btnJump = $("<button>Go</button>")
 
-        btnJump.click(() => {
+        btnJump.on("click", () => {
             const pn = parseInt(lbPageNum.val()) || 1
             this.goto(pn, lastPage)
             setTimeout(() => {

@@ -21,19 +21,19 @@ export default class PlayList {
 
         this.#addMusicListUlDragDropSupport()
 
-        $("#playlist-sort-btn").click(() => {
+        $("#playlist-sort-btn").on("click", () => {
             that.#db.sortPlayList()
             that.refresh()
         })
-        $("#playlist-shuffle-btn").click(() => {
+        $("#playlist-shuffle-btn").on("click", () => {
             that.#db.shufflePlayList()
             that.refresh()
         })
-        $("#playlist-reverse-btn").click(() => {
+        $("#playlist-reverse-btn").on("click", () => {
             that.#db.reversePlayList()
             that.refresh()
         })
-        $("#playlist-clear-btn").click(() => {
+        $("#playlist-clear-btn").on("click",() => {
             that.#db.clearPlayList()
             that.refresh()
         })
@@ -48,7 +48,7 @@ export default class PlayList {
             return name
         }
 
-        $("#playlist-load-custom-playlist").click(async () => {
+        $("#playlist-load-custom-playlist").on("click",async () => {
             const name = await selectCustomPlayListName("加载")
             if (!name) {
                 return
@@ -61,7 +61,7 @@ export default class PlayList {
             }
         })
 
-        $("#playlist-replace-custom-playlist").click(async () => {
+        $("#playlist-replace-custom-playlist").on("click",async () => {
             const name = await selectCustomPlayListName("替换")
             if (!name) {
                 return
@@ -70,7 +70,7 @@ export default class PlayList {
             that.refresh()
         })
 
-        $("#playlist-remove-custom-playlist").click(async () => {
+        $("#playlist-remove-custom-playlist").on("click",async () => {
             const name = await selectCustomPlayListName("删除")
             if (!name) {
                 return
@@ -79,7 +79,7 @@ export default class PlayList {
             that.refresh()
         })
 
-        $("#playlist-add-new-custom-playlist").click(async () => {
+        $("#playlist-add-new-custom-playlist").on("click",async () => {
             const name = await utils.prompt("请输入歌单名：")
             if (!name) {
                 return
@@ -169,25 +169,25 @@ export default class PlayList {
             span.text(`${i + 1}. ${name}`)
             span.attr("data-index", i)
             span.attr("draggable", "true")
-            span.click(() => that.#player.play(url))
+            span.on("click",() => that.#player.play(url))
             li.append(span)
 
             const btnPlay = $(
                 '<button><i class="fa-solid fa-play"></i></button>',
             )
-            btnPlay.click(() => that.#player.play(url))
+            btnPlay.on("click",() => that.#player.play(url))
             li.append(btnPlay)
 
             const btnEdit = $(
                 '<button><i class="fa-solid fa-pen"></i></button>',
             )
-            btnEdit.click(() => that.#edit(i, name))
+            btnEdit.on("click",() => that.#edit(i, name))
             li.append(btnEdit)
 
             const btnRemove = $(
                 '<button><i class="fa-solid fa-xmark"></i></button>',
             )
-            btnRemove.click(() => that.#removeOnePlayListMusic(url))
+            btnRemove.on("click",() => that.#removeOnePlayListMusic(url))
             li.append(btnRemove)
 
             if (track === url) {

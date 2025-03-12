@@ -15,7 +15,7 @@ export default class DirList {
         this.#navBar = $("#dirlist-nav-bar")
         this.#dirsUl = $("#dirlist-dirs")
 
-        $("#dirlist-clear-btn").click(() => {
+        $("#dirlist-clear-btn").on("click", () => {
             that.#db.clearPlayList()
             that.#playList.refresh()
         })
@@ -35,7 +35,7 @@ export default class DirList {
         bar.empty()
 
         const root = $("<button>root</button>")
-        root.click(() => {
+        root.on("click", () => {
             that.#db.setCurDir("")
             that.refresh()
         })
@@ -48,7 +48,7 @@ export default class DirList {
             const p = path
             const btn = $("<button>")
             btn.text(dir)
-            btn.click(() => {
+            btn.on("click", () => {
                 that.#db.setCurDir(p)
                 that.refresh()
             })
@@ -95,9 +95,9 @@ export default class DirList {
             spanTitle.text(`${subDir}`)
             spanTitle.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
             if (s2c) {
-                spanTitle.click(() => cd())
+                spanTitle.on("click", () => cd())
             } else {
-                spanTitle.click(() => utils.alert(`当前目录没有子目录`))
+                spanTitle.on("click", () => utils.alert(`当前目录没有子目录`))
             }
             li.append(spanTitle)
 
@@ -114,13 +114,13 @@ export default class DirList {
             spanCount.text(`(${mc}/${s2c})`)
             spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
 
-            spanCount.click(() => add())
+            spanCount.on("click", () => add())
             li.append(spanCount)
 
             const btnPlay = $(
                 '<button><i class="fa-solid fa-play"></i></button>',
             )
-            btnPlay.click(() => {
+            btnPlay.on("click", () => {
                 const all = that.#db.getAllMusic()
                 const m = all.filter((s) => s.startsWith(fullDir))
                 if (m.length < 1) {
@@ -138,7 +138,7 @@ export default class DirList {
             const btnAdd = $(
                 '<button title="添加到列表"><i class="fa-solid fa-plus"></i></button>',
             )
-            btnAdd.click(() => add())
+            btnAdd.on("click", () => add())
             li.append(btnAdd)
 
             ul.append(li)

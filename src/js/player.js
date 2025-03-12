@@ -62,7 +62,7 @@ export default class Player {
             playModeBtn.html(isRandom ? shuffle : cycle)
         }
         updatePlayModeBtn()
-        playModeBtn.click(() => {
+        playModeBtn.on("click", () => {
             const isRandom = !this.#db.isPlayModeRandom()
             that.#db.setPlayMode(isRandom)
             updatePlayModeBtn()
@@ -108,11 +108,11 @@ export default class Player {
 
     #initPrevNextTrackButtons() {
         const that = this
-        $("#audio-prev-track").click(() => {
+        $("#audio-prev-track").on("click", () => {
             that.prevTrack()
         })
 
-        $("#audio-next-track").click(() => {
+        $("#audio-next-track").on("click", () => {
             that.nextTrack()
         })
     }
@@ -133,7 +133,7 @@ export default class Player {
             playBtn.html('<i class="fa-solid fa-play"></i>')
         })
 
-        playBtn.click(() => {
+        playBtn.on("click", () => {
             if (isPlaying) {
                 that.#audio.pause()
                 return

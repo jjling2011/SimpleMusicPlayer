@@ -32,9 +32,10 @@ function init() {
 
 if (db.getAllMusic().length < 1) {
     db.updateMusicDbAsync().then(() => {
-        $("#pages-btn-lib").trigger("click")
         init()
+        pages.show("lib")
     })
 } else {
     init()
+    pages.show("playlist")
 }

@@ -23,20 +23,20 @@ export default class LibList {
 
         this.#searchBox = $(`#lib-search-box`)
         this.#searchBox.on("input", () => that.#doSearch())
-        $(`#lib-clear`).click(() => that.clearSearchKeyword())
-        $(`#lib-update-db`).click(() => that.#confirmUpdateMusicDb())
+        $(`#lib-clear`).on("click", () => that.clearSearchKeyword())
+        $(`#lib-update-db`).on("click", () => that.#confirmUpdateMusicDb())
 
         this.#musicList = $(`#lib-music-list`)
         this.#pager = new Pager("lib-pager-container", 5)
         this.#pager.onClick = (n) => that.#updateMusicList(n)
 
-        $(`#lib-add-cur-page-to-playlist`).click(() => {
+        $(`#lib-add-cur-page-to-playlist`).on("click", () => {
             const n = that.#db.addToPlayList(that.#curResult)
             that.#playList.refresh()
             utils.alert(`添加了 ${n} 首音乐`)
         })
 
-        $(`#lib-add-result-to-playlist`).click(() => {
+        $(`#lib-add-result-to-playlist`).on("click", () => {
             const n = that.#db.addToPlayList(that.#searchResult)
             that.#playList.refresh()
             utils.alert(`添加了 ${n} 首音乐`)
@@ -121,20 +121,20 @@ export default class LibList {
 
             const span = $("<span>")
             span.text(`${i + 1}. ${name}`)
-            span.click(() => that.#player.play(url))
+            span.on("click", () => that.#player.play(url))
             li.append(span)
 
             const btnPlay = $(
                 '<button><i class="fa-solid fa-play"></i></button>',
             )
-            btnPlay.click(() => that.#player.play(url))
+            btnPlay.on("click", () => that.#player.play(url))
             li.append(btnPlay)
 
             const btnAdd = $(
                 '<button><i class="fa-solid fa-plus"></i></button>',
             )
             btnAdd.attr("title", "添加到列表")
-            btnAdd.click(() => that.#addOnePlayListMusic(url))
+            btnAdd.on("click", () => that.#addOnePlayListMusic(url))
             li.append(btnAdd)
 
             this.#musicList.append(li)
