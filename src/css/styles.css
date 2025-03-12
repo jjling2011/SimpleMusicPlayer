@@ -26,20 +26,13 @@ body {
     }
 }
 
-footer {
-    color: gray;
+footer span {
     font-size: 0.8rem;
-    margin: 0rem 2rem;
-    text-align: right;
-    height: 1.5rem;
+    color: gray;
     justify-content: end;
     display: flex;
-    align-items: center;
-}
-
-footer a {
-    color: gray;
-    text-decoration-line: none;
+    flex-grow: 1;
+    margin: 0 1rem;
 }
 
 #dialog-select,
@@ -63,6 +56,7 @@ footer a {
 #dialog-confirm-window,
 #dialog-prompt-window {
     padding: 0.5rem;
+    border-radius: 0.5rem;
     background-color: white;
     margin: auto auto;
     position: relative;
@@ -238,12 +232,13 @@ input[type="button"] {
     height: 1.5rem;
 }
 
-.pages-header {
-    display: flex;
+.pages-header-wrapper {
+    margin-bottom: 0;
 }
 
-.pages-header-wrapper {
-    margin: 0.5rem 0rem 0 2rem;
+.pages-header {
+    margin-left: 1.25rem;
+    display: flex;
 }
 
 .pages-header button {

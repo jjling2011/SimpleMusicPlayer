@@ -62,7 +62,6 @@ export default class LibList {
         this.#searchBox.val("")
         setTimeout(() => {
             that.#doSearch()
-            that.#searchBox.focus()
         }, 1)
     }
 

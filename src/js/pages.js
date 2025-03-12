@@ -44,8 +44,9 @@ export default class Pages {
 
     slideTo(isLeft) {
         const d = isLeft ? +1 : -1
-        const idx = (TAGS.indexOf(this.#curTag) + d + TAGS.length) % TAGS.length
-        const tag = TAGS[idx]
+        const idx = TAGS.indexOf(this.#curTag) + d
+        const i = Math.max(0, Math.min(TAGS.length - 1, idx))
+        const tag = TAGS[i]
         this.show(tag)
     }
 

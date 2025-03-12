@@ -114,7 +114,7 @@ export default class DirList {
             }
 
             const spanCount = $("<span>")
-            spanCount.text(`(${mc}/${s2c})`)
+            spanCount.text(`(${mc} - ${s2c})`)
             spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
 
             spanCount.on("click", () => add())
