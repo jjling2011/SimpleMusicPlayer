@@ -3,7 +3,7 @@ import utils from "./utils.js"
 import Pager from "./pager.js"
 
 export default class PlayList {
-    #pageSize = 10
+    #pageSize = utils.getPageSize()
     #pager
 
     #db
@@ -215,7 +215,7 @@ export default class PlayList {
         this.#updateMusicList(src)
         const total = this.list.length
         utils.showText("playlist-total", `音乐：${total}`)
-        utils.showText("dirlist-total", `音乐：${total}`)
+        utils.showText("dirlist-total", `列表：${total}`)
         const n = this.#db.getCustomPlayListNames().length || 0
         utils.showText("custom-playlist-total", `歌单：${n}`)
     }

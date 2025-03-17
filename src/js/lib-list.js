@@ -3,7 +3,7 @@ import utils from "./utils.js"
 import Pager from "./pager.js"
 
 export default class LibList {
-    #pageSize = 10
+    #pageSize = utils.getPageSize()
     #searchResult = []
     #curResult = []
 

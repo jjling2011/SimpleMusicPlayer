@@ -18,6 +18,10 @@ class Utils {
         $("#dialog-select-cancel").on("click", () => this.#selectReject?.())
     }
 
+    getPageSize() {
+        return 20
+    }
+
     // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
     move(arr, fromIndex, toIndex) {
         const element = arr[fromIndex]

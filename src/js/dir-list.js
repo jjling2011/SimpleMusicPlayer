@@ -95,7 +95,7 @@ export default class DirList {
             const li = $("<li>")
 
             const spanTitle = $("<span>")
-            spanTitle.text(`${subDir}`)
+            spanTitle.text(`/${subDir}`)
             spanTitle.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
             if (s2c) {
                 spanTitle.on("click", () => cd())
