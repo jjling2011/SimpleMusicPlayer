@@ -95,12 +95,12 @@ export default class DirList {
             const li = $("<li>")
 
             const spanTitle = $("<span>")
-            spanTitle.text(`/${subDir}`)
             spanTitle.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
             if (s2c) {
+                spanTitle.text(`/${subDir}...`)
                 spanTitle.on("click", () => cd())
             } else {
-                spanTitle.on("click", () => utils.alert(`当前目录没有子目录`))
+                spanTitle.text(`/${subDir}`)
             }
             li.append(spanTitle)
 
@@ -114,7 +114,7 @@ export default class DirList {
             }
 
             const spanCount = $("<span>")
-            spanCount.text(`(${mc} - ${s2c})`)
+            spanCount.text(`(${mc} 首)`)
             spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
 
             spanCount.on("click", () => add())
