@@ -28,17 +28,12 @@ export default class Player {
         }
 
         this.#resetTimeLabel()
-        this.#initTimeLabelUpdater()
+        this.#initAudioEventListeners()
 
         this.#initProgressClickHandler()
         this.#initPlayModeButton()
         this.#initPrevNextTrackButtons()
         this.#initPlayButton()
-
-        const src = this.#db.getCurTrack()
-        if (src) {
-            this.#loadTrack(src)
-        }
     }
 
     #initProgressClickHandler() {
@@ -78,14 +73,16 @@ export default class Player {
         $("#audio-progress-buff").width("0%")
     }
 
-    #initTimeLabelUpdater() {
+    #initAudioEventListeners() {
         const that = this
 
         const timeLabel = $("#audio-timestamp")
         const progBar = $("#audio-progress-bar")
         const bufBar = $("#audio-progress-buff")
 
-        this.#audio.addEventListener("timeupdate", () => {})
+        this.#audio.addEventListener("loadstart", () => {
+            that.#tryPlay()
+        })
 
         this.#audio.addEventListener("timeupdate", () => {
             const dur = that.#audio.duration
@@ -143,7 +140,7 @@ export default class Player {
             }
             const src = that.#audioSource.attr("src")
             if (src) {
-                that.#tryPlay(src)
+                that.#tryPlay()
             } else {
                 that.nextTrack()
             }
@@ -183,6 +180,7 @@ export default class Player {
             throw new Error(msg)
         }
         utils.log(`加载：${src}`)
+        this.#db.setCurTrack(src)
         const name = utils.getMusicName(src)
         this.#title.text(name)
         if ("mediaSession" in navigator) {
@@ -199,14 +197,13 @@ export default class Player {
         this.#audio.pause()
         this.#audio.currentTime = 0
         this.#loadTrack(src)
-        this.#db.setCurTrack(src)
-        this.#tryPlay(src)
     }
 
-    #tryPlay(src) {
+    #tryPlay() {
         this.#audio
             .play()
             .catch((err) => utils.log(`ignore play err: ${err.message}`))
+        const src = this.#db.getCurTrack()
         this.onPlay && this.onPlay(src)
     }
 }
