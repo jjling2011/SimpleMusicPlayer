@@ -19,7 +19,7 @@ class Utils {
     }
 
     getPageSize() {
-        return 20
+        return 15
     }
 
     // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another

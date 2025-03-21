@@ -117,13 +117,7 @@ export default class DirList {
             spanCount.text(`(${mc} 首)`)
             spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
 
-            spanCount.on("click", () => add())
-            li.append(spanCount)
-
-            const btnPlay = $(
-                '<button><i class="fa-solid fa-play"></i></button>',
-            )
-            btnPlay.on("click", () => {
+            spanCount.on("click", () => {
                 const all = that.#db.getAllMusic()
                 const m = all.filter((s) => s.startsWith(fullDir))
                 if (m.length < 1) {
@@ -136,7 +130,7 @@ export default class DirList {
                 that.#player.nextTrack()
                 that.#pages.show("playlist")
             })
-            li.append(btnPlay)
+            li.append(spanCount)
 
             const btnAdd = $(
                 '<button title="添加到列表"><i class="fa-solid fa-plus"></i></button>',
