@@ -8,6 +8,8 @@ export default class Player {
     #audio
     #audioSource
 
+    #isPlaying
+
     // callback event handler
     onPlay = (track) => {}
 
@@ -80,7 +82,7 @@ export default class Player {
         const progBar = $("#audio-progress-bar")
         const bufBar = $("#audio-progress-buff")
 
-        this.#audio.addEventListener("loadstart", () => {
+        this.#audio.addEventListener("canplay", () => {
             that.#tryPlay()
         })
 
@@ -120,27 +122,35 @@ export default class Player {
     #initPlayButton() {
         const that = this
 
-        let isPlaying = false
         const playBtn = $("#audio-start-pause")
 
         this.#audio.addEventListener("play", () => {
-            isPlaying = true
+            that.#isPlaying = true
             playBtn.html('<i class="fa-solid fa-pause"></i>')
         })
 
         this.#audio.addEventListener("pause", () => {
-            isPlaying = false
+            that.#isPlaying = false
             playBtn.html('<i class="fa-solid fa-play"></i>')
         })
 
         playBtn.on("click", () => {
-            if (isPlaying) {
+            that.#isPlaying = !that.#isPlaying
+            // pause
+            if (!that.#isPlaying) {
                 that.#audio.pause()
                 return
             }
+
+            // play
             const src = that.#audioSource.attr("src")
             if (src) {
                 that.#tryPlay()
+                return
+            }
+            const cur = that.#db.getCurTrack()
+            if (cur) {
+                that.#loadTrack(cur)
             } else {
                 that.nextTrack()
             }
