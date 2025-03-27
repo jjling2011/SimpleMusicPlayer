@@ -17,8 +17,11 @@ export default class Database {
             list: [],
             allDirs: {},
             curDir: "",
+
             customLists: {},
+            customCurList: "",
             customHistory: {},
+
             update: "",
             curTrack: "",
         }
@@ -26,7 +29,7 @@ export default class Database {
         try {
             const s = window.localStorage.getItem(DATA_KEY)
             const d = JSON.parse(s)
-            for (let key in this.#data) {
+            for (let key in def) {
                 if (d[key] === undefined) {
                     d[key] = def[key]
                 }
@@ -35,6 +38,7 @@ export default class Database {
         } catch {}
 
         this.#data = this.#data || def
+        console.log(this.#data)
     }
 
     isPlayModeRandom() {
@@ -66,6 +70,25 @@ export default class Database {
         return done
     }
 
+    #saveCustomHistory() {
+        const name = this.#data.customCurList
+        if (!name) {
+            return
+        }
+        this.#data.customHistory[name] = {
+            curTrack: this.#data.curTrack,
+        }
+    }
+
+    #loadCustomHistory() {
+        const name = this.#data.customCurList
+        const h = this.#data.customHistory[name]
+        if (!h) {
+            return
+        }
+        this.#data.curTrack = h["curTrack"]
+    }
+
     #updateDirs() {
         const allDirs = {}
         for (const url of this.#data.all) {
@@ -84,19 +107,28 @@ export default class Database {
         if (!clist) {
             return false
         }
+        this.#data.customCurList = name
         this.#data.list = [...clist]
+        this.#loadCustomHistory()
         this.#save()
         return true
     }
 
     removeCustomPlayList(name) {
+        this.#data.customCurList = ""
         delete this.#data.customLists[name]
+        delete this.#data.customHistory[name]
         this.#save()
     }
 
     addCustomPlayList(name) {
+        this.#data.customCurList = name
         this.#data.customLists[name] = [...this.#data.list]
         this.#save()
+    }
+
+    getCustonCurPlayList() {
+        return this.#data.customCurList
     }
 
     getCustomPlayListNames() {
@@ -121,6 +153,7 @@ export default class Database {
         if (!content || !content.length || content.length < 1) {
             return 0
         }
+        this.#data.customCurList = ""
         const list = this.#data.list
         const slim = content.filter((s) => list.indexOf(s) < 0)
         this.#data.list = [...list, ...slim]
@@ -154,27 +187,32 @@ export default class Database {
         ) {
             return
         }
+        this.#data.customCurList = ""
         const dest = Math.min(arr.length - 1, toIndex)
         utils.move(arr, fromIndex, dest)
         this.#save()
     }
 
     removeOnePlayListMusic(src) {
+        this.#data.customCurList = ""
         this.#data.list = this.#data.list.filter((s) => s !== src)
         this.#save()
     }
 
     clearPlayList() {
+        this.#data.customCurList = ""
         this.#data.list = []
         this.#save()
     }
 
     reversePlayList() {
+        this.#data.customCurList = ""
         this.#data.list.reverse()
         this.#save()
     }
 
     sortPlayList() {
+        this.#data.customCurList = ""
         this.#data.list.sort((a, b) => {
             const pa = a.split("/")
             const pb = b.split("/")
@@ -186,6 +224,7 @@ export default class Database {
     }
 
     shufflePlayList() {
+        this.#data.customCurList = ""
         utils.shuffleArray(this.#data.list)
         this.#save()
     }
@@ -212,6 +251,7 @@ export default class Database {
     }
 
     #saveSettingsCore() {
+        this.#saveCustomHistory()
         const d = JSON.stringify(this.#data)
         window.localStorage.setItem(DATA_KEY, d)
     }

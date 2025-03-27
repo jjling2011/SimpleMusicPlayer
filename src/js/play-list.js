@@ -216,7 +216,11 @@ export default class PlayList {
         const total = this.list.length
         utils.showText("playlist-total", `音乐：${total}`)
         utils.showText("dirlist-total", `列表：${total}`)
-        const n = this.#db.getCustomPlayListNames().length || 0
-        utils.showText("custom-playlist-total", `歌单：${n}`)
+
+        const curList = this.#db.getCustonCurPlayList()
+        utils.showText(
+            "custom-playlist-total",
+            curList ? `歌单名：${curList}` : ``,
+        )
     }
 }
