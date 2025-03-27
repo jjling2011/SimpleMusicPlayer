@@ -18,13 +18,20 @@ export default class Database {
             allDirs: {},
             curDir: "",
             customLists: {},
+            customHistory: {},
             update: "",
             curTrack: "",
         }
 
         try {
             const s = window.localStorage.getItem(DATA_KEY)
-            this.#data = JSON.parse(s)
+            const d = JSON.parse(s)
+            for (let key in this.#data) {
+                if (d[key] === undefined) {
+                    d[key] = def[key]
+                }
+            }
+            this.#data = d
         } catch {}
 
         this.#data = this.#data || def
