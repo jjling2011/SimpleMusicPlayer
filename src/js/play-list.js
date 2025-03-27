@@ -57,6 +57,7 @@ export default class PlayList {
             }
             const ok = that.#db.loadCustomPlaylist(name)
             if (ok) {
+                that.#player.updatePlayModeButton()
                 that.refresh()
             } else {
                 utils.alert(`加载失败`)
@@ -220,7 +221,7 @@ export default class PlayList {
         const curList = this.#db.getCustonCurPlayList()
         utils.showText(
             "custom-playlist-total",
-            curList ? `歌单名：${curList}` : ``,
+            curList ? `歌单：${curList}` : ``,
         )
     }
 }

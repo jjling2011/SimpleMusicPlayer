@@ -7,6 +7,7 @@ export default class Player {
     #title
     #audio
     #audioSource
+    #playModeButton
 
     #isPlaying
 
@@ -20,6 +21,7 @@ export default class Player {
         this.#title = $("#audio-title")
         this.#audio = $("#audio")[0]
         this.#audioSource = $("#audio-source")
+        this.#playModeButton = $("#audio-play-mode")
 
         this.#audio.addEventListener("ended", () => that.nextTrack())
         const ms = navigator.mediaSession
@@ -54,19 +56,19 @@ export default class Player {
 
     #initPlayModeButton() {
         const that = this
-        const playModeBtn = $("#audio-play-mode")
-        function updatePlayModeBtn() {
-            const isRandom = that.#db.isPlayModeRandom()
-            const shuffle = '<i class="fa-solid fa-shuffle"></i>'
-            const cycle = '<i class="fa-solid fa-repeat"></i>'
-            playModeBtn.html(isRandom ? shuffle : cycle)
-        }
-        updatePlayModeBtn()
-        playModeBtn.on("click", () => {
+        this.updatePlayModeButton()
+        this.#playModeButton.on("click", () => {
             const isRandom = !this.#db.isPlayModeRandom()
             that.#db.setPlayMode(isRandom)
-            updatePlayModeBtn()
+            that.updatePlayModeButton()
         })
+    }
+
+    updatePlayModeButton() {
+        const isRandom = this.#db.isPlayModeRandom()
+        const shuffle = '<i class="fa-solid fa-shuffle"></i>'
+        const cycle = '<i class="fa-solid fa-repeat"></i>'
+        this.#playModeButton.html(isRandom ? shuffle : cycle)
     }
 
     #resetTimeLabel() {

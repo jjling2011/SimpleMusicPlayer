@@ -77,6 +77,7 @@ export default class Database {
         }
         this.#data.customHistory[name] = {
             curTrack: this.#data.curTrack,
+            isRandom: this.#data.isRandom,
         }
     }
 
@@ -86,7 +87,8 @@ export default class Database {
         if (!h) {
             return
         }
-        this.#data.curTrack = h["curTrack"]
+        this.#data.curTrack = h["curTrack"] || ""
+        this.#data.isRandom = h["isRandom"] || false
     }
 
     #updateDirs() {
