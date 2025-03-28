@@ -1,5 +1,5 @@
-# SimpleWebMusicPlayer
-这是一个播放服务器里面的音乐的网页应用。是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。比较简陋，也不打算添加复杂的功能。  
+# SimpleMusicPlayer
+这是一个播放服务器里面的音乐的网页应用。是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。  
 ![GitHub License](https://img.shields.io/github/license/jjling2011/SimpleWebMusicPlayer) ![GitHub repo size](https://img.shields.io/github/repo-size/jjling2011/SimpleWebMusicPlayer) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/jjling2011/SimpleWebMusicPlayer/total)
 
 ### 安装
@@ -12,11 +12,11 @@
 ![player.png](./doc/player-v1.0.1.png)  
 
 ### 高级用法
- * 可以添加 flac 等其他格式音乐，至于能不能播放就得看浏览器支不支持了
- * 音乐文件可以放到文件夹里面，也可以用符号链接指向其他目录，但是要注意权限。运行 web 服务的账号要有真实路径中每个文件夹的 rx （读取和执行）权限
- * 这个播放器不支持设置密码，但是 web 服务器通常都支持 .htpasswd，可以自行生成 .htpasswd 文件来添加访问密码
+ * 可以添加 flac 等其他音乐格式，需要要注意浏览器是否支持。
+ * 音乐文件可以放到文件夹里面，也可以用符号链接指向其他目录。运行 web 服务的账号要有真实路径中每个文件夹的 rx （读取和执行）权限。
+ * 这个播放器不支持设置密码，但是 HTTP 服务器通常都支持 .htpasswd，可以自行生成 .htpasswd 文件来添加访问密码。
 
-### 自行构建
+### 开发
 ```bash
 # 安装 vite 等依赖
 npm install
