@@ -23,6 +23,8 @@ export default class PlayList {
 
         this.#addMusicListUlDragDropSupport()
 
+        $("#audio-title").on("click", () => that.refresh())
+
         $("#playlist-sort-btn").on("click", () => {
             that.#db.sortPlayList()
             that.refresh()

@@ -145,6 +145,7 @@ input[type="button"] {
 
 #audio-title {
     justify-content: center;
+    cursor: pointer;
 }
 
 .audio-wrapper {

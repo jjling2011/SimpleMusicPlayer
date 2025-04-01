@@ -10,8 +10,8 @@ export default class Pages {
 
     constructor() {
         const width = Math.min(window.screen.width, window.screen.height)
-        this.#marginX = width * 0.25
-        this.#marginY = width * 0.2
+        this.#marginX = width * 0.22
+        this.#marginY = width * 0.18
     }
 
     init() {
