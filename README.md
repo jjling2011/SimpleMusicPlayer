@@ -1,9 +1,9 @@
 # SimpleMusicPlayer
 这是一个播放服务器里面的音乐的网页应用。是 [typecho-mini](https://github.com/jjling2011/typecho-mini) 项目里面的一个小功能。  
-![GitHub License](https://img.shields.io/github/license/jjling2011/SimpleWebMusicPlayer) ![GitHub repo size](https://img.shields.io/github/repo-size/jjling2011/SimpleWebMusicPlayer) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/jjling2011/SimpleWebMusicPlayer/total)
+![GitHub License](https://img.shields.io/github/license/jjling2011/SimpleMusicPlayer) ![GitHub repo size](https://img.shields.io/github/repo-size/jjling2011/SimpleMusicPlayer) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/jjling2011/SimpleMusicPlayer/total)
 
 ### 安装
- * 从 [releases](https://github.com/jjling2011/SimpleWebMusicPlayer/releases/latest/) 下载 zip 包，解压到支持 php 的 web 目录
+ * 从 [releases](https://github.com/jjling2011/SimpleMusicPlayer/releases/latest/) 下载 zip 包，解压到支持 php 的 web 目录
  * 随便复制几个 mp3 文件到那个目录里面
 
 访问 serv.php 会看到一个列出所有音乐文件路径的 JSON 页面。  

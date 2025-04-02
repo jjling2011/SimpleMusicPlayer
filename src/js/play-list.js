@@ -177,12 +177,6 @@ export default class PlayList {
             span.on("click", () => that.#player.play(url))
             li.append(span)
 
-            const btnPlay = $(
-                '<button><i class="fa-solid fa-play"></i></button>',
-            )
-            btnPlay.on("click", () => that.#player.play(url))
-            li.append(btnPlay)
-
             const btnEdit = $(
                 '<button><i class="fa-solid fa-pen"></i></button>',
             )
@@ -220,7 +214,7 @@ export default class PlayList {
         utils.showText("playlist-total", `音乐：${total}`)
         utils.showText("dirlist-total", `列表：${total}`)
 
-        const curList = this.#db.getCustonCurPlayList()
+        const curList = this.#db.getCustomCurListName()
         utils.showText(
             "custom-playlist-total",
             curList ? `歌单：${curList}` : ``,

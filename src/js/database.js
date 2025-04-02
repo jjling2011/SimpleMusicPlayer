@@ -129,7 +129,11 @@ export default class Database {
         this.#save()
     }
 
-    getCustonCurPlayList() {
+    clearCustomCurListName() {
+        this.#data.customCurList = ""
+    }
+
+    getCustomCurListName() {
         return this.#data.customCurList
     }
 

@@ -122,14 +122,11 @@ export default class LibList {
 
             const span = $("<span>")
             span.text(`${i + 1}. ${name}`)
-            span.on("click", () => that.#player.play(url))
+            span.on("click", () => {
+                that.#db.clearCustomCurListName()
+                that.#player.play(url)
+            })
             li.append(span)
-
-            const btnPlay = $(
-                '<button><i class="fa-solid fa-play"></i></button>',
-            )
-            btnPlay.on("click", () => that.#player.play(url))
-            li.append(btnPlay)
 
             const btnAdd = $(
                 '<button><i class="fa-solid fa-plus"></i></button>',
