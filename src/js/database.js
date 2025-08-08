@@ -129,6 +129,22 @@ export default class Database {
         this.#save()
     }
 
+    addMusicToCustomPlayList(name, url) {
+        if (!url) {
+            return `音乐路径为空！`
+        }
+        const list = this.#data.customLists[name]
+        if (!list) {
+            return `歌单不 [${name}] 存在！`
+        }
+        if (list.indexOf(url) >= 0) {
+            return `目标歌单已经存在相同音乐！`
+        }
+        list.push(url)
+        this.#save()
+        return ""
+    }
+
     clearCustomCurListName() {
         this.#data.customCurList = ""
     }

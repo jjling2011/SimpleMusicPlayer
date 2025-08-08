@@ -1,12 +1,7 @@
 import { defineConfig } from "vite"
-import legacy from "@vitejs/plugin-legacy"
 
 export default defineConfig({
-    plugins: [
-        legacy({
-            targets: ["chrome >= 64", "safari >= 12"],
-        }),
-    ],
+    plugins: [],
     build: {
         emptyOutDir: true,
         rollupOptions: {
