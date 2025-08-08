@@ -38,7 +38,7 @@ export default class Database {
         } catch {}
 
         this.#data = this.#data || def
-        console.log(this.#data)
+        // console.log(this.#data)
     }
 
     isPlayModeRandom() {
@@ -157,7 +157,9 @@ export default class Database {
         if (!this.#data.customLists) {
             this.#data.customLists = {}
         }
-        return Object.keys(this.#data.customLists)
+        const names = Object.keys(this.#data.customLists)
+        names.sort()
+        return names
     }
 
     #updatePlayList() {

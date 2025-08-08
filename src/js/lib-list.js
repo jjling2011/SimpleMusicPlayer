@@ -128,6 +128,12 @@ export default class LibList {
             })
             li.append(span)
 
+            const btnHeart = $(
+                '<button><i class="fa-solid fa-heart"></i></button>',
+            )
+            btnHeart.on("click", () => utils.addMusicToPlaylist(that.#db, url))
+            li.append(btnHeart)
+
             const btnAdd = $(
                 '<button><i class="fa-solid fa-plus"></i></button>',
             )

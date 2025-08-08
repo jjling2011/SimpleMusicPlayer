@@ -188,6 +188,27 @@ class Utils {
         return ps[ps.length - 1]
     }
 
+    async addMusicToPlaylist(db, url) {
+        const name = await this.selectCustomPlayListName(db, "添加音乐")
+        if (!name) {
+            return
+        }
+        const err = db.addMusicToCustomPlayList(name, url)
+        if (err) {
+            this.alert(err)
+        }
+    }
+
+    async selectCustomPlayListName(db, tag) {
+        const names = db.getCustomPlayListNames()
+        if (!names || names.length < 1) {
+            this.alert(`没有歌单可选，请先新建歌单。`)
+            return
+        }
+        const name = await this.select(`请选择要${tag}的歌单名：`, names)
+        return name
+    }
+
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     shuffleArray(array) {
         for (var i = array.length - 1; i >= 0; i--) {
