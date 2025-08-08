@@ -2,6 +2,16 @@ import $ from "jquery"
 import utils from "./utils.js"
 import Pager from "./pager.js"
 
+async function selectCustomPlayListName(db, tag) {
+    const names = db.getCustomPlayListNames()
+    if (!names || names.length < 1) {
+        utils.alert(`没有歌单可选，请先新建歌单。`)
+        return
+    }
+    const name = await utils.select(`请选择要${tag}的歌单名：`, names)
+    return name
+}
+
 export default class PlayList {
     #pageSize = utils.getPageSize()
     #pager
@@ -43,7 +53,7 @@ export default class PlayList {
         })
 
         $("#playlist-load-custom-playlist").on("click", async () => {
-            const name = await utils.selectCustomPlayListName(that.#db, "加载")
+            const name = await selectCustomPlayListName(that.#db, "加载")
             if (!name) {
                 return
             }
@@ -57,7 +67,7 @@ export default class PlayList {
         })
 
         $("#playlist-replace-custom-playlist").on("click", async () => {
-            const name = await utils.selectCustomPlayListName(that.#db, "替换")
+            const name = await selectCustomPlayListName(that.#db, "替换")
             if (!name) {
                 return
             }
@@ -66,7 +76,7 @@ export default class PlayList {
         })
 
         $("#playlist-remove-custom-playlist").on("click", async () => {
-            const name = await utils.selectCustomPlayListName(that.#db, "删除")
+            const name = await selectCustomPlayListName(that.#db, "删除")
             if (!name) {
                 return
             }
@@ -127,6 +137,39 @@ export default class PlayList {
         this.refresh()
     }
 
+    async replaceMultiplePlayListMusic(urls) {
+        const name = await selectCustomPlayListName(this.#db, "替换音乐")
+        if (!name) {
+            return 0
+        }
+        const n = this.#db.replaceCustomPlayList(name, urls)
+        this.#reload()
+        return n
+    }
+
+    async addMultiplePlayListMusic(urls) {
+        const name = await selectCustomPlayListName(this.#db, "添加音乐")
+        if (!name) {
+            return 0
+        }
+        const n = this.#db.addMusicsToCustomPlayList(name, urls)
+        this.#reload()
+        return n
+    }
+
+    async addOnePlayListMusic(url) {
+        const name = await selectCustomPlayListName(this.#db, "添加音乐")
+        if (!name) {
+            return
+        }
+        const err = this.#db.addOneMusicToCustomPlayList(name, url)
+        if (err) {
+            utils.alert(err)
+            return
+        }
+        this.#reload()
+    }
+
     async #edit(idx, name) {
         const r = await utils.prompt(`请输入 [${name}] 的新序号：`, idx + 1)
         if (r === null) {
@@ -167,11 +210,11 @@ export default class PlayList {
             span.on("click", () => that.#player.play(url))
             li.append(span)
 
-            const btnHeart = $(
-                '<button><i class="fa-solid fa-heart"></i></button>',
+            const btnAdd = $(
+                '<button><i class="fa-solid fa-plus"></i></button>',
             )
-            btnHeart.on("click", () => utils.addMusicToPlaylist(that.#db, url))
-            li.append(btnHeart)
+            btnAdd.on("click", () => that.addOnePlayListMusic(url))
+            li.append(btnAdd)
 
             const btnEdit = $(
                 '<button><i class="fa-solid fa-pen"></i></button>',
@@ -201,6 +244,15 @@ export default class PlayList {
 
         this.list = list
         this.#pager.goto(cur, pns)
+    }
+
+    #reload() {
+        const curList = this.#db.getCustomCurListName()
+        if (!curList) {
+            return
+        }
+        this.#db.loadCustomPlaylist(curList)
+        this.refresh()
     }
 
     refresh(track) {

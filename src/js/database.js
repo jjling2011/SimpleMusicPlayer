@@ -11,6 +11,7 @@ export default class Database {
     }
 
     #load() {
+        const defName = "默认歌单"
         const def = {
             isRandom: true,
             all: [],
@@ -18,8 +19,10 @@ export default class Database {
             allDirs: {},
             curDir: "",
 
-            customLists: {},
-            customCurList: "",
+            customLists: {
+                [defName]: [],
+            },
+            customCurList: defName,
             customHistory: {},
 
             update: "",
@@ -129,7 +132,28 @@ export default class Database {
         this.#save()
     }
 
-    addMusicToCustomPlayList(name, url) {
+    replaceCustomPlayList(name, urls) {
+        urls = urls || []
+        this.#data.customLists[name] = urls
+        this.#save()
+        return urls.length
+    }
+
+    addMusicsToCustomPlayList(name, urls) {
+        if (!urls || !urls.length || urls.length < 1) {
+            return 0
+        }
+        const list = this.#data.customLists[name]
+        if (!list) {
+            return 0
+        }
+        const slim = urls.filter((s) => list.indexOf(s) < 0)
+        this.#data.customLists[name] = [...list, ...slim]
+        this.#save()
+        return slim.length
+    }
+
+    addOneMusicToCustomPlayList(name, url) {
         if (!url) {
             return `音乐路径为空！`
         }
@@ -171,18 +195,6 @@ export default class Database {
                 (s) => all.indexOf(s) >= 0,
             )
         }
-    }
-
-    addToPlayList(content) {
-        if (!content || !content.length || content.length < 1) {
-            return 0
-        }
-        this.#data.customCurList = ""
-        const list = this.#data.list
-        const slim = content.filter((s) => list.indexOf(s) < 0)
-        this.#data.list = [...list, ...slim]
-        this.#save()
-        return slim.length
     }
 
     setCurTrack(track) {

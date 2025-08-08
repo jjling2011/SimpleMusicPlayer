@@ -32,15 +32,17 @@ export default class LibList {
         this.#pager = new Pager("lib-pager-container", 5)
         this.#pager.onClick = (n) => that.#updateMusicList(n)
 
-        $(`#lib-add-cur-page-to-playlist`).on("click", () => {
-            const n = that.#db.addToPlayList(that.#curResult)
-            that.#playList.refresh()
+        $(`#lib-add-cur-page-to-playlist`).on("click", async () => {
+            const n = await that.#playList.addMultiplePlayListMusic(
+                that.#curResult,
+            )
             utils.alert(`添加了 ${n} 首音乐`)
         })
 
-        $(`#lib-add-result-to-playlist`).on("click", () => {
-            const n = that.#db.addToPlayList(that.#searchResult)
-            that.#playList.refresh()
+        $(`#lib-add-result-to-playlist`).on("click", async () => {
+            const n = await that.#playList.addMultiplePlayListMusic(
+                that.#searchResult,
+            )
             utils.alert(`添加了 ${n} 首音乐`)
         })
     }
@@ -101,16 +103,6 @@ export default class LibList {
         this.#pager.goto(1, lastPage)
     }
 
-    #addOnePlayListMusic(src) {
-        const name = utils.getMusicName(src)
-        const n = this.#db.addToPlayList([src])
-        const msg = n > 0 ? `添加 [${name}] 成功` : `已存在：[${name}]`
-        utils.showText("lib-total", msg)
-        if (n) {
-            this.#playList.refresh()
-        }
-    }
-
     #genMusicList(start, end) {
         const that = this
         for (let i = start; i < end; i++) {
@@ -128,17 +120,11 @@ export default class LibList {
             })
             li.append(span)
 
-            const btnHeart = $(
-                '<button><i class="fa-solid fa-heart"></i></button>',
-            )
-            btnHeart.on("click", () => utils.addMusicToPlaylist(that.#db, url))
-            li.append(btnHeart)
-
             const btnAdd = $(
                 '<button><i class="fa-solid fa-plus"></i></button>',
             )
-            btnAdd.attr("title", "添加到列表")
-            btnAdd.on("click", () => that.#addOnePlayListMusic(url))
+            btnAdd.attr("title", "添加到歌单")
+            btnAdd.on("click", () => that.#playList.addOnePlayListMusic(url))
             li.append(btnAdd)
 
             this.#musicList.append(li)

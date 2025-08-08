@@ -105,37 +105,35 @@ export default class DirList {
             li.append(spanTitle)
 
             const fullDir = `./${subDir}`
-            function add() {
+            async function addMusics() {
                 const all = that.#db.getAllMusic()
                 const m = all.filter((s) => s.startsWith(fullDir))
-                const n = that.#db.addToPlayList(m)
-                that.#playList.refresh()
+                const n = await that.#playList.addMultiplePlayListMusic(m)
                 utils.alert(`添加了 ${n} 首音乐`)
+            }
+
+            async function replaceMusics() {
+                const all = that.#db.getAllMusic()
+                const m = all.filter((s) => s.startsWith(fullDir))
+                const n = await that.#playList.replaceMultiplePlayListMusic(m)
+                utils.alert(`替换后共 ${n} 首音乐`)
             }
 
             const spanCount = $("<span>")
             spanCount.text(`(${mc} 首)`)
             spanCount.attr(`title`, `音乐：${mc} 子目录: ${s2c}`)
-
-            spanCount.on("click", () => {
-                const all = that.#db.getAllMusic()
-                const m = all.filter((s) => s.startsWith(fullDir))
-                if (m.length < 1) {
-                    utils.alert("目录内没有音乐")
-                    return
-                }
-                that.#db.clearPlayList()
-                that.#db.addToPlayList(m)
-                that.#playList.refresh()
-                that.#player.nextTrack()
-                that.#pages.show("playlist")
-            })
             li.append(spanCount)
 
-            const btnAdd = $(
-                '<button title="添加到列表"><i class="fa-solid fa-plus"></i></button>',
+            const btnReplace = $(
+                '<button title="替换歌单"><i class="fa-solid fa-clone"></i></button>',
             )
-            btnAdd.on("click", () => add())
+            btnReplace.on("click", () => replaceMusics())
+            li.append(btnReplace)
+
+            const btnAdd = $(
+                '<button title="添加到歌单"><i class="fa-solid fa-plus"></i></button>',
+            )
+            btnAdd.on("click", () => addMusics())
             li.append(btnAdd)
 
             ul.append(li)
