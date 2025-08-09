@@ -1,10 +1,22 @@
 import utils from "./utils.js"
 
 const DATA_KEY = "data-key"
+const STATE_KEY = "state-key"
+function saveToLocalStorage(key, value) {
+    try {
+        const str = JSON.stringify(value)
+        window.localStorage.setItem(key, str)
+    } catch (err) {
+        utils.alert(`保存数据失败：${err.message}`)
+    }
+}
 
 export default class Database {
     #data
-    #saveSettingsTimerHandle
+    #saveDataTimer
+
+    #state
+    #saveStateTimer
 
     constructor() {
         this.#load()
@@ -12,45 +24,61 @@ export default class Database {
 
     #load() {
         const defName = "默认歌单"
-        const def = {
+        const defState = {
             isRandom: true,
+            curDir: "",
+            customCurList: defName,
+            curTrack: "",
+            customHistory: {},
+        }
+
+        const defData = {
             all: [],
             list: [],
             allDirs: {},
-            curDir: "",
-
             customLists: {
                 [defName]: [],
             },
-            customCurList: defName,
-            customHistory: {},
-
             update: "",
-            curTrack: "",
         }
 
+        // load Data
         try {
-            const s = window.localStorage.getItem(DATA_KEY)
-            const d = JSON.parse(s)
-            for (let key in def) {
-                if (d[key] === undefined) {
-                    d[key] = def[key]
+            const raw_data = window.localStorage.getItem(DATA_KEY)
+            const data = JSON.parse(raw_data || "{}")
+            for (let key in defData) {
+                if (data[key] === undefined) {
+                    data[key] = defData[key]
                 }
             }
-            this.#data = d
+            this.#data = data
         } catch {}
+        this.#data = this.#data || defData
+        // console.log("data:", this.#data)
 
-        this.#data = this.#data || def
-        // console.log(this.#data)
+        // load State
+        try {
+            const raw_state = window.localStorage.getItem(STATE_KEY)
+            const state = JSON.parse(raw_state || "{}")
+            for (let key in defState) {
+                if (state[key] === undefined) {
+                    // backword compact
+                    state[key] = state[key] || defState[key]
+                }
+            }
+            this.#state = state
+        } catch {}
+        this.#state = this.#state || defState
+        // console.log("state:", this.#state)
     }
 
     isPlayModeRandom() {
-        return this.#data.isRandom
+        return this.#state.isRandom
     }
 
     setPlayMode(isRandom) {
-        this.#data["isRandom"] = isRandom
-        this.#save()
+        this.#state["isRandom"] = isRandom
+        this.#saveState()
     }
 
     updateMusicDbAsync() {
@@ -64,34 +92,34 @@ export default class Database {
                     that.#data.update = new Date().toLocaleString()
                     that.#updateDirs()
                     that.#updatePlayList()
-                    that.#save()
+                    that.#saveData()
                     resolve()
                 })
         })
         utils.loading("更新数据库中", done)
-        utils.log("invoke DB update()")
+        utils.log(`更新数据库`)
         return done
     }
 
     #saveCustomHistory() {
-        const name = this.#data.customCurList
+        const name = this.#state.customCurList
         if (!name) {
             return
         }
-        this.#data.customHistory[name] = {
-            curTrack: this.#data.curTrack,
-            isRandom: this.#data.isRandom,
+        this.#state.customHistory[name] = {
+            curTrack: this.#state.curTrack,
+            isRandom: this.#state.isRandom,
         }
     }
 
     #loadCustomHistory() {
-        const name = this.#data.customCurList
-        const h = this.#data.customHistory[name]
-        if (!h) {
+        const name = this.#state.customCurList
+        const hist = this.#state.customHistory[name]
+        if (!hist) {
             return
         }
-        this.#data.curTrack = h["curTrack"] || ""
-        this.#data.isRandom = h["isRandom"] || false
+        this.#state.curTrack = hist["curTrack"] || ""
+        this.#state.isRandom = hist["isRandom"] || false
     }
 
     #updateDirs() {
@@ -112,30 +140,41 @@ export default class Database {
         if (!clist) {
             return false
         }
-        this.#data.customCurList = name
+
+        if (this.#state.customCurList !== name) {
+            this.#saveCustomHistory()
+            this.#state.customCurList = name
+            this.#loadCustomHistory()
+            this.#saveState()
+        }
         this.#data.list = [...clist]
-        this.#loadCustomHistory()
-        this.#save()
+        this.#saveData()
+
         return true
     }
 
     removeCustomPlayList(name) {
-        this.#data.customCurList = ""
         delete this.#data.customLists[name]
-        delete this.#data.customHistory[name]
-        this.#save()
+        this.#saveData()
+
+        delete this.#state.customHistory[name]
+        if (this.#state.customCurList === name) {
+            this.#state.customCurList = ""
+        }
+        this.#saveState()
     }
 
     addCustomPlayList(name) {
-        this.#data.customCurList = name
-        this.#data.customLists[name] = [...this.#data.list]
-        this.#save()
+        this.#data.customLists[name] = []
+        this.#saveData()
+        this.#state.customCurList = name
+        this.#saveState()
     }
 
     replaceCustomPlayList(name, urls) {
         urls = urls || []
         this.#data.customLists[name] = urls
-        this.#save()
+        this.#saveData()
         return urls.length
     }
 
@@ -149,7 +188,7 @@ export default class Database {
         }
         const slim = urls.filter((s) => list.indexOf(s) < 0)
         this.#data.customLists[name] = [...list, ...slim]
-        this.#save()
+        this.#saveData()
         return slim.length
     }
 
@@ -165,16 +204,18 @@ export default class Database {
             return `目标歌单已经存在相同音乐！`
         }
         list.push(url)
-        this.#save()
+        this.#saveData()
         return ""
     }
 
     clearCustomCurListName() {
-        this.#data.customCurList = ""
+        this.#saveCustomHistory()
+        this.#state.customCurList = ""
+        this.#saveState()
     }
 
     getCustomCurListName() {
-        return this.#data.customCurList
+        return this.#state.customCurList
     }
 
     getCustomPlayListNames() {
@@ -198,12 +239,12 @@ export default class Database {
     }
 
     setCurTrack(track) {
-        this.#data.curTrack = track
-        this.#save()
+        this.#state.curTrack = track
+        this.#saveState()
     }
 
     getCurTrack() {
-        return this.#data.curTrack
+        return this.#state.curTrack
     }
 
     getLastUpdateDate() {
@@ -223,32 +264,33 @@ export default class Database {
         ) {
             return
         }
-        this.#data.customCurList = ""
+
+        this.clearCustomCurListName()
         const dest = Math.min(arr.length - 1, toIndex)
         utils.move(arr, fromIndex, dest)
-        this.#save()
+        this.#saveData()
     }
 
     removeOnePlayListMusic(src) {
-        this.#data.customCurList = ""
+        this.clearCustomCurListName()
         this.#data.list = this.#data.list.filter((s) => s !== src)
-        this.#save()
+        this.#saveData()
     }
 
     clearPlayList() {
-        this.#data.customCurList = ""
+        this.clearCustomCurListName()
         this.#data.list = []
-        this.#save()
+        this.#saveData()
     }
 
     reversePlayList() {
-        this.#data.customCurList = ""
+        this.clearCustomCurListName()
         this.#data.list.reverse()
-        this.#save()
+        this.#saveData()
     }
 
     sortPlayList() {
-        this.#data.customCurList = ""
+        this.clearCustomCurListName()
         this.#data.list.sort((a, b) => {
             const pa = a.split("/")
             const pb = b.split("/")
@@ -256,13 +298,13 @@ export default class Database {
             const lb = pb[pb.length - 1]
             return utils.compareString(la, lb)
         })
-        this.#save()
+        this.#saveData()
     }
 
     shufflePlayList() {
-        this.#data.customCurList = ""
+        this.clearCustomCurListName()
         utils.shuffleArray(this.#data.list)
-        this.#save()
+        this.#saveData()
     }
 
     getPlayList() {
@@ -274,28 +316,33 @@ export default class Database {
     }
 
     getCurDir() {
-        return this.#data.curDir
+        return this.#state.curDir
     }
 
     setCurDir(dir) {
-        this.#data.curDir = dir
-        this.#save()
+        this.#state.curDir = dir
+        this.#saveState()
     }
 
     getAllDirs() {
         return this.#data.allDirs || {}
     }
 
-    #saveSettingsCore() {
-        this.#saveCustomHistory()
-        const d = JSON.stringify(this.#data)
-        window.localStorage.setItem(DATA_KEY, d)
+    #saveState() {
+        const that = this
+        clearTimeout(that.#saveStateTimer)
+        that.#saveStateTimer = setTimeout(
+            () => saveToLocalStorage(STATE_KEY, that.#state),
+            500,
+        )
     }
 
-    #save() {
-        clearTimeout(this.#saveSettingsTimerHandle)
-        this.#saveSettingsTimerHandle = setTimeout(() => {
-            this.#saveSettingsCore()
-        }, 500)
+    #saveData() {
+        const that = this
+        clearTimeout(that.#saveDataTimer)
+        that.#saveDataTimer = setTimeout(
+            () => saveToLocalStorage(DATA_KEY, that.#data),
+            500,
+        )
     }
 }

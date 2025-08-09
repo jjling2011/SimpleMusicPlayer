@@ -71,8 +71,9 @@ export default class PlayList {
             if (!name) {
                 return
             }
-            that.#db.addCustomPlayList(name)
-            that.refresh()
+            const urls = that.#db.getPlayList()
+            that.#db.replaceCustomPlayList(name, urls)
+            that.#reload()
         })
 
         $("#playlist-remove-custom-playlist").on("click", async () => {
@@ -81,7 +82,7 @@ export default class PlayList {
                 return
             }
             that.#db.removeCustomPlayList(name)
-            that.refresh()
+            that.#reload()
         })
 
         $("#playlist-add-new-custom-playlist").on("click", async () => {
@@ -90,7 +91,7 @@ export default class PlayList {
                 return
             }
             that.#db.addCustomPlayList(name)
-            that.refresh()
+            that.#reload()
         })
     }
 
