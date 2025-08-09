@@ -47,7 +47,11 @@ export default class PlayList {
             that.#db.reversePlayList()
             that.refresh()
         })
-        $("#playlist-clear-btn").on("click", () => {
+        $("#playlist-clear-btn").on("click", async () => {
+            const ok = await utils.confirm(`清空当前歌单吗？`)
+            if (!ok) {
+                return
+            }
             that.#db.clearPlayList()
             that.refresh()
         })
@@ -57,7 +61,7 @@ export default class PlayList {
             if (!name) {
                 return
             }
-            const ok = that.#db.loadCustomPlaylist(name)
+            const ok = that.#db.selectCustomPlaylist(name)
             if (ok) {
                 that.#player.updatePlayModeButton()
                 that.refresh()
@@ -73,7 +77,7 @@ export default class PlayList {
             }
             const urls = that.#db.getPlayList()
             that.#db.replaceCustomPlayList(name, urls)
-            that.#reload()
+            that.refresh()
         })
 
         $("#playlist-remove-custom-playlist").on("click", async () => {
@@ -82,7 +86,7 @@ export default class PlayList {
                 return
             }
             that.#db.removeCustomPlayList(name)
-            that.#reload()
+            that.refresh()
         })
 
         $("#playlist-add-new-custom-playlist").on("click", async () => {
@@ -91,7 +95,7 @@ export default class PlayList {
                 return
             }
             that.#db.addCustomPlayList(name)
-            that.#reload()
+            that.refresh()
         })
     }
 
@@ -133,7 +137,12 @@ export default class PlayList {
         })
     }
 
-    #removeOnePlayListMusic(src) {
+    async #removeOnePlayListMusic(src) {
+        const name = utils.getMusicName(src)
+        const ok = await utils.confirm(`删除 [${name}] 吗？`)
+        if (!ok) {
+            return
+        }
         this.#db.removeOnePlayListMusic(src)
         this.refresh()
     }
@@ -144,7 +153,7 @@ export default class PlayList {
             return 0
         }
         const n = this.#db.replaceCustomPlayList(name, urls)
-        this.#reload()
+        this.refresh()
         return n
     }
 
@@ -154,7 +163,7 @@ export default class PlayList {
             return 0
         }
         const n = this.#db.addMusicsToCustomPlayList(name, urls)
-        this.#reload()
+        this.refresh()
         return n
     }
 
@@ -168,7 +177,7 @@ export default class PlayList {
             utils.alert(err)
             return
         }
-        this.#reload()
+        this.refresh()
     }
 
     async #edit(idx, name) {
@@ -245,15 +254,6 @@ export default class PlayList {
 
         this.list = list
         this.#pager.goto(cur, pns)
-    }
-
-    #reload() {
-        const curList = this.#db.getCustomCurListName()
-        if (!curList) {
-            return
-        }
-        this.#db.loadCustomPlaylist(curList)
-        this.refresh()
     }
 
     refresh(track) {

@@ -1,5 +1,6 @@
 import utils from "./utils.js"
 
+const DEFAULT_PLAYLIST_NAME = "默认歌单"
 const DATA_KEY = "data-key"
 const STATE_KEY = "state-key"
 function saveToLocalStorage(key, value) {
@@ -9,6 +10,10 @@ function saveToLocalStorage(key, value) {
     } catch (err) {
         utils.alert(`保存数据失败：${err.message}`)
     }
+}
+
+function isEmptyList(list) {
+    return !list || list.length < 1
 }
 
 export default class Database {
@@ -23,21 +28,19 @@ export default class Database {
     }
 
     #load() {
-        const defName = "默认歌单"
         const defState = {
             isRandom: true,
             curDir: "",
-            customCurList: defName,
+            customCurList: DEFAULT_PLAYLIST_NAME,
             curTrack: "",
             customHistory: {},
         }
 
         const defData = {
             all: [],
-            list: [],
             allDirs: {},
             customLists: {
-                [defName]: [],
+                [DEFAULT_PLAYLIST_NAME]: [],
             },
             update: "",
         }
@@ -91,7 +94,7 @@ export default class Database {
                     that.#data.all = JSON.parse(s || "[]")
                     that.#data.update = new Date().toLocaleString()
                     that.#updateDirs()
-                    that.#updatePlayList()
+                    that.#updatePlayListDB()
                     that.#saveData()
                     resolve()
                 })
@@ -135,7 +138,7 @@ export default class Database {
         this.#data.allDirs = allDirs
     }
 
-    loadCustomPlaylist(name) {
+    selectCustomPlaylist(name) {
         const clist = this.#data.customLists[name]
         if (!clist) {
             return false
@@ -147,9 +150,6 @@ export default class Database {
             this.#loadCustomHistory()
             this.#saveState()
         }
-        this.#data.list = [...clist]
-        this.#saveData()
-
         return true
     }
 
@@ -158,8 +158,18 @@ export default class Database {
         this.#saveData()
 
         delete this.#state.customHistory[name]
-        if (this.#state.customCurList === name) {
-            this.#state.customCurList = ""
+        if (this.#state.customCurList !== name) {
+            this.#saveState()
+            return
+        }
+
+        const names = this.getCustomPlayListNames()
+        if (names.length < 1) {
+            this.#data.customLists[DEFAULT_PLAYLIST_NAME] = []
+            this.#saveData()
+            this.#state.customCurList = DEFAULT_PLAYLIST_NAME
+        } else {
+            this.#state.customCurList = names[0]
         }
         this.#saveState()
     }
@@ -208,12 +218,6 @@ export default class Database {
         return ""
     }
 
-    clearCustomCurListName() {
-        this.#saveCustomHistory()
-        this.#state.customCurList = ""
-        this.#saveState()
-    }
-
     getCustomCurListName() {
         return this.#state.customCurList
     }
@@ -227,9 +231,8 @@ export default class Database {
         return names
     }
 
-    #updatePlayList() {
+    #updatePlayListDB() {
         const all = this.#data.all
-        this.#data.list = this.#data.list.filter((s) => all.indexOf(s) >= 0)
         const names = this.getCustomPlayListNames()
         for (let name of names) {
             this.#data.customLists[name] = this.#data.customLists[name].filter(
@@ -252,63 +255,65 @@ export default class Database {
     }
 
     movePlayListMusic(fromIndex, toIndex) {
-        const arr = this.#data.list
+        const list = this.getPlayList()
         if (
-            !arr ||
-            !arr.length ||
-            arr.length < 2 ||
+            !list ||
+            !list.length ||
+            list.length < 2 ||
             fromIndex === toIndex ||
             fromIndex < 0 ||
             toIndex < 0 ||
-            fromIndex >= arr.length
+            fromIndex >= list.length
         ) {
             return
         }
 
-        this.clearCustomCurListName()
-        const dest = Math.min(arr.length - 1, toIndex)
-        utils.move(arr, fromIndex, dest)
+        const dest = Math.min(list.length - 1, toIndex)
+        utils.move(list, fromIndex, dest)
+        this.#saveData()
+    }
+
+    #modifyList(action) {
+        const list = this.getPlayList()
+        if (isEmptyList(list)) {
+            return
+        }
+        action(list)
         this.#saveData()
     }
 
     removeOnePlayListMusic(src) {
-        this.clearCustomCurListName()
-        this.#data.list = this.#data.list.filter((s) => s !== src)
-        this.#saveData()
+        this.#modifyList((list) => utils.removeAll(list, src))
     }
 
     clearPlayList() {
-        this.clearCustomCurListName()
-        this.#data.list = []
-        this.#saveData()
+        this.#modifyList((list) => (list.length = 0))
     }
 
     reversePlayList() {
-        this.clearCustomCurListName()
-        this.#data.list.reverse()
-        this.#saveData()
+        this.#modifyList((list) => list.reverse())
     }
 
     sortPlayList() {
-        this.clearCustomCurListName()
-        this.#data.list.sort((a, b) => {
-            const pa = a.split("/")
-            const pb = b.split("/")
-            const la = pa[pa.length - 1]
-            const lb = pb[pb.length - 1]
-            return utils.compareString(la, lb)
-        })
-        this.#saveData()
+        this.#modifyList((list) =>
+            list.sort((a, b) => {
+                const pa = a.split("/")
+                const pb = b.split("/")
+                const la = pa[pa.length - 1]
+                const lb = pb[pb.length - 1]
+                return utils.compareString(la, lb)
+            }),
+        )
     }
 
     shufflePlayList() {
-        this.clearCustomCurListName()
-        utils.shuffleArray(this.#data.list)
-        this.#saveData()
+        this.#modifyList((list) => utils.shuffleArray(list))
     }
 
     getPlayList() {
-        return this.#data.list || []
+        const name = this.#state.customCurList
+        const list = this.#data.customLists[name]
+        return list || []
     }
 
     getAllMusic() {

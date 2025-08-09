@@ -120,7 +120,6 @@ export default class LibList {
             const span = $("<span>")
             span.text(`${i + 1}. ${name}`)
             span.on("click", () => {
-                that.#db.clearCustomCurListName()
                 that.#player.play(url)
             })
             li.append(span)

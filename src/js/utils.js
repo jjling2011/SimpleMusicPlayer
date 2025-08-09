@@ -188,6 +188,11 @@ class Utils {
         return ps[ps.length - 1]
     }
 
+    // https://stackoverflow.com/questions/48608119/javascript-remove-all-occurrences-of-a-value-from-an-array
+    removeAll(array, item) {
+        for (var i = 0; (i = array.indexOf(item, i)) >= 0; array.splice(i, 1));
+    }
+
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     shuffleArray(array) {
         for (var i = array.length - 1; i >= 0; i--) {
