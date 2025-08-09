@@ -55,21 +55,21 @@ export default class Database {
 
     updateMusicDbAsync() {
         const that = this
-        const done = new Promise((resolve) => {
+        const done = new Promise((resolve, reject) => {
             utils
                 .post("serv.php")
-                .catch((err) => utils.alert(`更新数据库错误: ${err.message}`))
+                .catch(reject)
                 .then((s) => {
                     that.#data.all = JSON.parse(s || "[]")
                     that.#data.update = new Date().toLocaleString()
                     that.#updateDirs()
                     that.#updatePlayList()
                     that.#save()
-                    utils.alert("更新完成")
+                    resolve()
                 })
-                .finally(() => resolve())
         })
         utils.loading("更新数据库中", done)
+        utils.log("invoke DB update()")
         return done
     }
 

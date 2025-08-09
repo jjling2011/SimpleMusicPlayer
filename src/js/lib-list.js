@@ -50,13 +50,18 @@ export default class LibList {
     async #confirmUpdateMusicDb() {
         const last = this.#db.getLastUpdateDate()
         if (
-            !last ||
-            (await utils.confirm(`上次更新：${last}\n确定要更新数据库吗？`))
+            last &&
+            !(await utils.confirm(`上次更新：${last}\n确定要更新数据库吗？`))
         ) {
-            await this.#db.updateMusicDbAsync()
-            this.clearSearchKeyword()
-            this.#dirList.refresh()
+            return
         }
+        try {
+            await this.#db.updateMusicDbAsync()
+        } catch (err) {
+            utils.alert(`更新数据库错误：${err.message}`)
+        }
+        this.clearSearchKeyword()
+        this.#dirList.refresh()
     }
 
     clearSearchKeyword() {

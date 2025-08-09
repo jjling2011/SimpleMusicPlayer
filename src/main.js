@@ -8,6 +8,7 @@ import LibList from "./js/lib-list.js"
 import Pages from "./js/pages.js"
 import PlayList from "./js/play-list.js"
 import DirList from "./js/dir-list.js"
+import utils from "./js/utils.js"
 
 const pages = new Pages()
 pages.init()
@@ -22,14 +23,14 @@ function init() {
     libList.clearSearchKeyword()
     playList.refresh()
     dirList.refresh()
+    pages.show("playlist")
 }
 
-if (db.getAllMusic().length < 1) {
-    db.updateMusicDbAsync().then(() => {
-        init()
-        pages.show("lib")
-    })
+const cmd = utils.getSearchParam("cmd")
+if (db.getAllMusic().length < 1 || cmd === "update") {
+    db.updateMusicDbAsync()
+        .catch((err) => utils.alert(`更新数据库错误：${err.message}`))
+        .finally(() => init())
 } else {
     init()
-    pages.show("playlist")
 }

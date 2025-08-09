@@ -197,6 +197,13 @@ class Utils {
             array[j] = temp
         }
     }
+
+    getSearchParam(key) {
+        const url = window.location.href
+        const urlObj = new URL(url)
+        const value = urlObj.searchParams.get(key)
+        return value
+    }
 }
 
 const utils = new Utils()
