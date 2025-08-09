@@ -62,8 +62,8 @@ export default class Database {
             const state = JSON.parse(raw_state || "{}")
             for (let key in defState) {
                 if (state[key] === undefined) {
-                    // backword compact
-                    state[key] = state[key] || defState[key]
+                    // backward-compatible
+                    state[key] = state[key] || this.#data[key] || defState[key]
                 }
             }
             this.#state = state
