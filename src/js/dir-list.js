@@ -3,25 +3,15 @@ import utils from "./utils.js"
 
 export default class DirList {
     #db
-    #player
-    #pages
     #playList
     #navBar
     #dirsUl
 
-    constructor(db, playList, player, pages) {
-        const that = this
+    constructor(db, playList) {
         this.#db = db
-        this.#player = player
-        this.#pages = pages
         this.#playList = playList
         this.#navBar = $("#dirlist-nav-bar")
         this.#dirsUl = $("#dirlist-dirs")
-
-        $("#dirlist-clear-btn").on("click", () => {
-            that.#db.clearPlayList()
-            that.#playList.refresh()
-        })
     }
 
     refresh() {

@@ -16,7 +16,7 @@ pages.init()
 const db = new Database()
 const player = new Player(db)
 const playList = new PlayList(db, player)
-const dirList = new DirList(db, playList, player, pages)
+const dirList = new DirList(db, playList)
 const libList = new LibList(db, player, playList, dirList)
 
 function init() {
