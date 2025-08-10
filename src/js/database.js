@@ -333,6 +333,15 @@ export default class Database {
         return this.#data.allDirs || {}
     }
 
+    getStats() {
+        const data = window.localStorage.getItem(DATA_KEY)
+        const state = window.localStorage.getItem(STATE_KEY)
+        return {
+            ["data"]: (data || "").length,
+            ["state"]: (state || "").length,
+        }
+    }
+
     #saveState() {
         const that = this
         clearTimeout(that.#saveStateTimer)

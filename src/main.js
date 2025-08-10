@@ -9,17 +9,20 @@ import Pages from "./js/pages.js"
 import PlayList from "./js/play-list.js"
 import DirList from "./js/dir-list.js"
 import utils from "./js/utils.js"
+import About from "./js/about.js"
 
 const pages = new Pages()
 pages.init()
 
 const db = new Database()
+const about = new About(db)
 const player = new Player(db)
 const playList = new PlayList(db, player)
 const dirList = new DirList(db, playList)
 const libList = new LibList(db, player, playList, dirList)
 
 function init() {
+    about.init()
     libList.clearSearchKeyword()
     playList.refresh()
     dirList.refresh()

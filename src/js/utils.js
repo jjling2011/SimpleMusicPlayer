@@ -209,6 +209,21 @@ class Utils {
         const value = urlObj.searchParams.get(key)
         return value
     }
+
+    formatSize(bytes) {
+        const k = 1024
+        const units = ["B", "KiB", "MiB", "GiB"]
+
+        let unitIndex = 0
+        let size = bytes
+
+        while (size >= k && unitIndex < units.length - 1) {
+            size /= k
+            unitIndex++
+        }
+
+        return `${parseFloat(size.toFixed(1))} ${units[unitIndex]}`
+    }
 }
 
 const utils = new Utils()
