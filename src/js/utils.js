@@ -157,10 +157,14 @@ class Utils {
         })
     }
 
-    formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60)
-        const secs = Math.floor(seconds % 60)
-        return `${minutes}:${secs < 10 ? "0" : ""}${secs}`
+    formatTimeLabel(left, right) {
+        const lm = Math.floor(left / 60)
+        const ls = Math.floor(left % 60)
+        const lss = ls < 10 ? `0${ls}`: `${ls}`
+        const rm = Math.floor(right / 60)
+        const rs = Math.floor(right % 60)
+        const rss = rs < 10 ? `0${rs}`: `${rs}`
+        return `${lm}:${lss} / ${rm}:${rss}`
     }
 
     pickRandom(arr) {

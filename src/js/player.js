@@ -88,25 +88,29 @@ export default class Player {
             that.#tryPlay()
         })
 
+        const timerUpdateInterval = 350
+        let lastTimerUpdate = Date.now() - timerUpdateInterval
         this.#audio.addEventListener("timeupdate", () => {
+            const now = Date.now()
+            if (now < lastTimerUpdate + timerUpdateInterval) {
+                return
+            }
+            lastTimerUpdate = now
+
             const dur = that.#audio.duration
             const buf = that.#audio.buffered
             if (!dur || !buf || buf.length < 1) {
                 timeLabel.text("0:00 / 0:00")
                 return
             }
-            const cur = that.#audio.currentTime
 
-            // progress bar
-            const pcb = Math.floor((buf.end(buf.length - 1) / dur) * 100)
-            const pcc = Math.floor((((cur / dur) * 100) / pcb) * 100)
+            const cur = that.#audio.currentTime
+            const pcb = (buf.end(buf.length - 1) / dur) * 100
+            const pcc = (((cur / dur) * 100) / pcb) * 100
+            const label = utils.formatTimeLabel(cur, dur)
             bufBar.width(`${pcb}%`)
             progBar.width(`${pcc}%`)
-
-            // timestamp
-            const head = utils.formatTime(cur)
-            const tail = utils.formatTime(dur)
-            timeLabel.text(`${head} / ${tail}`)
+            timeLabel.text(label)
         })
     }
 
